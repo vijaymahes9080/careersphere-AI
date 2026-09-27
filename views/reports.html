@@ -1,0 +1,39 @@
+<!-- CareerSphere AI — Reports -->
+<section class="page" aria-labelledby="rep-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Export</p>
+      <h1 id="rep-title">Reports</h1>
+      <p class="muted">Print-ready HTML reports — open the print dialog to save as PDF (no external services used).</p>
+    </div>
+  </div>
+
+  <div class="panel empty-state" ng-if="!vm.hasData()">
+    <h2>Nothing to report yet</h2>
+    <p>Import data first — reports are generated only from your actual data.</p>
+    <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+  </div>
+
+  <div ng-if="vm.hasData()">
+    <div class="panel">
+      <div class="panel-head"><h2>Report type</h2></div>
+      <div class="report-types">
+        <button type="button" class="report-type" ng-repeat="t in vm.types" ng-class="{active: vm.selected === t.id}" ng-click="vm.select(t.id)">
+          <strong>{{t.label}}</strong>
+          <span class="muted small">{{t.desc}}</span>
+        </button>
+      </div>
+      <div class="btn-row" style="margin-top:14px">
+        <button type="button" class="btn btn-primary" ng-click="vm.print()">Print / Save as PDF</button>
+        <button type="button" class="btn btn-ghost" ng-click="vm.download()">Download HTML</button>
+      </div>
+      <p class="muted small">If the print window is blocked, the report downloads as an HTML file you can open and print.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Preview</h2><span class="muted small">print-ready rendering</span></div>
+      <iframe class="report-preview" title="Report preview" ng-attr-srcdoc="{{vm.previewDoc}}"></iframe>
+    </div>
+  </div>
+</section>

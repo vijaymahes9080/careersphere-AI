@@ -1,0 +1,17 @@
+# Dependencies (the app is zero-dependency — vendor/ is committed on purpose)
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local env
+.env
+.env.local

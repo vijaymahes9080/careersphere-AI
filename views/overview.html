@@ -1,0 +1,136 @@
+<!-- CareerSphere AI — Overview -->
+<section class="page" aria-labelledby="overview-title">
+
+  <!-- Profile header -->
+  <div class="hero panel">
+    <div class="hero-main">
+      <p class="eyebrow">Career Profile</p>
+      <h1 id="overview-title">{{ vm.profile().identity.name || 'Unnamed Profile' }}</h1>
+      <p class="hero-sub" ng-if="vm.profile().identity.summary">{{ vm.profile().identity.summary }}</p>
+
+      <div class="hero-facts">
+        <div class="fact" ng-if="vm.profile().education.length">
+          <span class="fact-k">Education</span>
+          <span class="fact-v">{{ vm.profile().education[0].name }}<span ng-if="vm.profile().education[0].institution"> — {{ vm.profile().education[0].institution }}</span></span>
+        </div>
+        <div class="fact" ng-if="vm.primaryTargetRole()">
+          <span class="fact-k">Target role</span>
+          <span class="fact-v">{{ vm.primaryTargetRole() }}</span>
+        </div>
+        <div class="fact" ng-if="vm.profile().targetRoles.length || vm.profile().careerGoals.length">
+          <span class="fact-k">Direction</span>
+          <span class="fact-v">{{ vm.directionText() }}</span>
+        </div>
+        <div class="fact">
+          <span class="fact-k">Data</span>
+          <span class="fact-v">{{ vm.state.datasets.length }} dataset{{ vm.state.datasets.length === 1 ? '' : 's' }} · {{ vm.profile().skills.length }} skills · {{ vm.profile().projects.length }} projects</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-readiness" ng-if="vm.readiness()">
+      <cs-ring value="vm.readiness().value" label="Career Readiness" note="analytical estimate"></cs-ring>
+      <details class="factor-details">
+        <summary>View factors</summary>
+        <ul class="factor-list">
+          <li ng-repeat="f in vm.readiness().factors">
+            <strong>{{f.label}}</strong> — {{f.excluded ? 'excluded: ' : ''}}{{f.score}}/{{f.max}}
+            <span class="muted"> · {{f.detail}}</span>
+          </li>
+        </ul>
+        <p class="muted small">{{ vm.readiness().note }}</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="panel empty-state" ng-if="!vm.hasData()">
+    <h2>No data imported yet</h2>
+    <p>CareerSphere only shows what your data supports. Start by importing a resume, project list, skill matrix or target-role dataset.</p>
+    <div class="empty-actions">
+      <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+      <a class="btn btn-ghost" href="#/data-center">Load demo data</a>
+    </div>
+    <p class="muted small">Demo datasets are labeled "DEMO DATA" and are never mixed with your own data.</p>
+  </div>
+
+  <!-- Intelligence cards -->
+  <div class="cards-grid" ng-if="vm.hasData()">
+    <article class="panel card" ng-repeat="c in vm.cards()" ng-class="{'card-muted': !c.canCompute}">
+      <header class="card-head">
+        <h3>{{c.label}}</h3>
+        <span class="badge" ng-if="!c.canCompute">needs data</span>
+      </header>
+      <div class="card-value">{{c.value}}</div>
+      <p class="card-detail">{{c.detail}}</p>
+      <details ng-if="c.factors.length" class="factor-details">
+        <summary>Factors used</summary>
+        <ul class="factor-list">
+          <li ng-repeat="f in c.factors"><strong>{{f.label}}</strong><span ng-if="f.value"> — {{f.value}}</span><span ng-if="f.points !== undefined"> — {{f.points}}/{{f.max}} pts</span></li>
+        </ul>
+      </details>
+    </article>
+  </div>
+
+  <!-- Central career intelligence map + detail -->
+  <div class="split-2" ng-if="vm.hasData()">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Career Intelligence Map</h2>
+        <span class="muted small">Center: you · click groups to expand</span>
+      </div>
+      <cs-intel-map data="vm.intelMap()" on-select="vm.onSelectNode(node)" selected-id="vm.selectedNode.id"></cs-intel-map>
+    </div>
+    <div class="panel detail-panel">
+      <div class="panel-head"><h2>Node details</h2></div>
+      <p class="muted" ng-if="!vm.selectedNode">Click any node in the map to see its description, evidence, sources, confidence and recommended next action.</p>
+      <cs-node-detail node="vm.selectedNode"></cs-node-detail>
+    </div>
+  </div>
+
+  <!-- Data quality + sources -->
+  <div class="split-2" ng-if="vm.hasData()">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Data quality</h2>
+        <span class="badge badge-warn" ng-if="vm.quality().total">{{vm.quality().total}} warnings</span>
+        <span class="badge badge-err" ng-if="vm.quality().errors.length">{{vm.quality().errors.length}} errors</span>
+      </div>
+      <ul class="quality-list">
+        <li ng-repeat="w in vm.quality().warnings" class="q-item q-{{w.code | lowercase}}">
+          <span class="q-mark">!</span>
+          <span>{{w.message}}</span>
+        </li>
+        <li ng-repeat="e in vm.quality().errors" class="q-item q-error">
+          <span class="q-mark">✗</span>
+          <span>{{e.message}}</span>
+        </li>
+      </ul>
+      <p class="muted" ng-if="!vm.quality().warnings.length && !vm.quality().errors.length">No data quality issues detected.</p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><h2>Sources &amp; pipeline</h2></div>
+      <table class="table">
+        <thead><tr><th>Source</th><th>Format</th><th>Records</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr ng-repeat="ds in vm.state.datasets">
+            <td>{{ds.name}} <span class="badge badge-demo" ng-if="ds.isDemo">DEMO DATA</span></td>
+            <td>{{ds.format | uppercase}}</td>
+            <td>{{ds.recordCount}}</td>
+            <td><span class="status-pill" ng-class="ds.status">{{ds.status}}</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="muted small" ng-if="!vm.state.datasets.length">No sources imported.</p>
+
+      <div class="pipeline-strip" ng-if="vm.state.pipelineLog.length">
+        <h4>Pipeline performance (last run)</h4>
+        <div class="pipeline-steps">
+          <span class="pipe-step" ng-repeat="s in vm.state.pipelineLog">{{s.step}} <strong>{{s.ms}}ms</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="careerSphereApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CareerSphere AI — a local-first Career Intelligence &amp; Personal Growth Platform. Data → Extraction → Normalization → Analysis → Intelligence → Visualization → Career Action.">
+  <title>CareerSphere AI — Career Intelligence System</title>
+
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%232f6fed'/><text x='50' y='66' font-size='48' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>CS</text></svg>">
+</head>
+<body class="theme-dark" ng-controller="MainController as appCtrl">
+
+  <!-- ═══ Skip link (keyboard/screen-reader users jump past the nav) ═══ -->
+  <a class="skip-link" href="#main-content" ng-click="appCtrl.skipToMain($event)">Skip to main content</a>
+
+  <!-- ═══ Header ═══ -->
+  <header class="app-header">
+    <div class="hdr-top">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">CS</span>
+        <div class="brand-text">
+          <!-- Not an <h1>: each view owns the single page-level <h1> -->
+          <span class="brand-name">CareerSphere AI</span>
+          <p>Your Career Intelligence System</p>
+        </div>
+      </div>
+
+      <div class="hdr-actions">
+        <span class="badge badge-demo" ng-if="appCtrl.hasDemo()">DEMO DATA</span>
+
+        <button type="button" class="btn btn-primary" ng-click="appCtrl.analyze()" ng-disabled="appCtrl.analyzing"
+                title="Run the full analysis pipeline and show what CareerSphere found">
+          <span ng-if="!appCtrl.analyzing">⚡ Analyze My Career</span>
+          <span ng-if="appCtrl.analyzing">Analyzing…</span>
+        </button>
+
+        <button type="button" class="btn btn-ghost" ng-click="appCtrl.toggleTheme()"
+                ng-attr-aria-label="{{appCtrl.isLight() ? 'Switch to dark mode' : 'Switch to light mode'}}">
+          <span ng-if="!appCtrl.isLight()">☀ Light</span>
+          <span ng-if="appCtrl.isLight()">☾ Dark</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="app-nav" aria-label="Main navigation">
+      <a ng-repeat="item in appCtrl.nav" href="#{{item.path}}"
+         ng-class="{active: appCtrl.isActive(item.path)}"
+         ng-attr-aria-current="{{appCtrl.isActive(item.path) ? 'page' : 'false'}}">
+        <span class="nav-icon" aria-hidden="true">{{item.icon}}</span>
+        {{item.label}}
+      </a>
+    </nav>
+  </header>
+
+  <!-- ═══ Main views ═══ -->
+  <main id="main-content" role="main" tabindex="-1">
+    <div ng-view></div>
+  </main>
+
+  <!-- ═══ Footer ═══ -->
+  <footer class="app-footer">
+    <p><strong>CareerSphere AI</strong> — Data → Extraction → Normalization → Analysis → Intelligence → Visualization → Career Action.</p>
+    <p>All processing happens locally in your browser. No uploads, no API keys, no tracking. Analytical scores are labeled as CareerSphere analytical estimates.</p>
+  </footer>
+
+  <!-- ═══ "Analyze My Career" report modal ═══ -->
+  <div class="modal-backdrop" ng-if="appCtrl.showReport && appCtrl.report" ng-click="appCtrl.closeReport()">
+    <div class="modal report-modal" role="dialog" aria-modal="true" aria-labelledby="report-title"
+         ng-click="$event.stopPropagation()">
+      <header class="modal-head">
+        <div>
+          <h3 id="report-title" class="report-title">{{appCtrl.report.title}}</h3>
+          <p class="report-when">Generated {{appCtrl.report.generatedAt | date:'medium'}} · transparent analysis of your imported data</p>
+        </div>
+        <button type="button" class="nd-close" ng-click="appCtrl.closeReport()" aria-label="Close report">×</button>
+      </header>
+
+      <div class="modal-body">
+        <!-- Readiness -->
+        <div class="report-readiness" ng-if="appCtrl.report.readiness">
+          <cs-ring value="appCtrl.report.readiness.value" label="Career readiness" size="sm"></cs-ring>
+          <div>
+            <ul class="factor-list">
+              <li ng-repeat="f in appCtrl.report.readiness.factors">
+                <strong>{{f.label}}</strong>{{f.excluded ? ' (excluded — no data)' : ''}} — {{f.score}}/{{f.max}}
+                <span class="muted"> · {{f.detail}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Sections -->
+        <div class="report-sec" ng-repeat="sec in appCtrl.report.sections" ng-class="'sec-' + sec.tone">
+          <h4><span class="sec-dot"></span>{{sec.heading}}</h4>
+          <ul>
+            <li ng-repeat="item in sec.items track by $index">{{item}}</li>
+          </ul>
+        </div>
+
+        <p class="report-disclaimer">{{appCtrl.report.disclaimer}}</p>
+
+        <div class="btn-row" style="margin-top:16px">
+          <a class="btn btn-ghost" href="#/reports" ng-click="appCtrl.closeReport()">Open full reports →</a>
+          <button type="button" class="btn btn-primary" ng-click="appCtrl.closeReport()">Got it</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Toasts ═══ -->
+  <div class="toast-stack" role="status" aria-live="polite">
+    <div class="toast toast-{{t.type}}" ng-repeat="t in appCtrl.toasts track by t.id">
+      <span>{{t.message}}</span>
+      <button type="button" ng-click="appCtrl.dismissToast(t.id)" aria-label="Dismiss">×</button>
+    </div>
+  </div>
+
+  <!-- ═══ Vendor libraries (local, no CDN) ═══ -->
+  <script src="vendor/angular.min.js"></script>
+  <script src="vendor/angular-route.min.js"></script>
+
+  <!-- ═══ Application (modules first) ═══ -->
+  <script src="js/app.js"></script>
+
+  <!-- Models -->
+  <script src="js/models/career-profile.model.js"></script>
+
+  <!-- Services: ingestion → parsing → normalization → extraction →
+       relationships → evidence → analysis → visualization → reports -->
+  <script src="js/services/storage.service.js"></script>
+  <script src="js/services/xml-parser.service.js"></script>
+  <script src="js/services/json-parser.service.js"></script>
+  <script src="js/services/csv-parser.service.js"></script>
+  <script src="js/services/text-extraction.service.js"></script>
+  <script src="js/services/normalization.service.js"></script>
+  <script src="js/services/data-ingestion.service.js"></script>
+  <script src="js/services/entity.service.js"></script>
+  <script src="js/services/relationship.service.js"></script>
+  <script src="js/services/evidence.service.js"></script>
+  <script src="js/services/skill-analysis.service.js"></script>
+  <script src="js/services/project-analysis.service.js"></script>
+  <script src="js/services/career-analysis.service.js"></script>
+  <script src="js/services/data-quality.service.js"></script>
+  <script src="js/services/visualization.service.js"></script>
+  <script src="js/services/report.service.js"></script>
+  <script src="js/services/notification.service.js"></script>
+  <script src="js/services/profile.service.js"></script>
+
+  <!-- Components / directives -->
+  <script src="js/components/intel-map.directive.js"></script>
+  <script src="js/components/radar.directive.js"></script>
+  <script src="js/components/ring.directive.js"></script>
+  <script src="js/components/network.directive.js"></script>
+  <script src="js/components/node-detail.directive.js"></script>
+
+  <!-- Controllers -->
+  <script src="js/controllers/main.controller.js"></script>
+  <script src="js/controllers/overview.controller.js"></script>
+  <script src="js/controllers/skills.controller.js"></script>
+  <script src="js/controllers/career-map.controller.js"></script>
+  <script src="js/controllers/projects.controller.js"></script>
+  <script src="js/controllers/learning.controller.js"></script>
+  <script src="js/controllers/opportunities.controller.js"></script>
+  <script src="js/controllers/evidence.controller.js"></script>
+  <script src="js/controllers/data-center.controller.js"></script>
+  <script src="js/controllers/reports.controller.js"></script>
+  <script src="js/controllers/settings.controller.js"></script>
+</body>
+</html>

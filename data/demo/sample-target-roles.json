@@ -1,0 +1,45 @@
+{
+  "_notice": "CAREERSPHERE AI — DEMO DATA (development/sample dataset). Target-role profiles with requirements. Requirements are imported data — CareerSphere never invents job requirements.",
+  "targetRoles": [
+    {
+      "title": "AI Engineer",
+      "source": "demo-role-ai-engineer.json (imported role profile)",
+      "requirements": [
+        { "skill": "Python", "level": "Advanced" },
+        { "skill": "Machine Learning", "level": "Intermediate" },
+        { "skill": "Deep Learning", "level": "Intermediate" },
+        { "skill": "TensorFlow", "level": "Intermediate" },
+        { "skill": "Data Analysis", "level": "Intermediate" },
+        { "skill": "MLOps", "level": null },
+        { "skill": "Docker", "level": "Basic" },
+        { "skill": "Git", "level": "Intermediate" }
+      ]
+    },
+    {
+      "title": "IoT Engineer",
+      "source": "demo-role-iot-engineer.json (imported role profile)",
+      "requirements": [
+        { "skill": "C", "level": "Intermediate" },
+        { "skill": "ESP32", "level": null },
+        { "skill": "LoRa", "level": null },
+        { "skill": "Sensors", "level": null },
+        { "skill": "MQTT", "level": null },
+        { "skill": "Python", "level": "Intermediate" },
+        { "skill": "Embedded Systems", "level": null }
+      ]
+    },
+    {
+      "title": "Full Stack Developer",
+      "source": "demo-role-fullstack.json (imported role profile)",
+      "requirements": [
+        { "skill": "JavaScript", "level": "Advanced" },
+        { "skill": "AngularJS", "level": "Intermediate" },
+        { "skill": "Node.js", "level": "Intermediate" },
+        { "skill": "REST API", "level": null },
+        { "skill": "SQL", "level": "Intermediate" },
+        { "skill": "Git", "level": "Intermediate" },
+        { "skill": "Docker", "level": "Basic" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+<!-- CareerSphere AI — Opportunities -->
+<section class="page" aria-labelledby="opp-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Matching</p>
+      <h1 id="opp-title">Opportunity Analysis</h1>
+      <p class="muted">Matched · Partial · Missing · Unknown — analyzed strictly against imported opportunity data.</p>
+    </div>
+  </div>
+
+  <div ng-if="!vm.hasData()" class="panel empty-state">
+    <h2>No opportunity data imported</h2>
+    <p>CareerSphere never fabricates job listings. Import job descriptions or opportunity datasets (JSON/CSV/TXT) to analyze them.</p>
+    <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+    <p class="muted small" style="margin-top:12px">Tip: the Data Center's demo bundle includes a sample opportunity dataset labeled DEMO DATA.</p>
+  </div>
+
+  <div ng-if="vm.hasData()">
+    <div class="stat-row">
+      <div class="stat panel"><span class="stat-v">{{vm.analysis().count}}</span><span class="stat-k">Opportunities</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.analysis().avgMatch}}%</span><span class="stat-k">Avg match (est.)</span></div>
+    </div>
+
+    <div class="opp-list">
+      <article class="panel opp-card" ng-repeat="row in vm.analysis().rows track by $index" ng-class="{expanded: vm.selectedRow === row}">
+        <header class="pc-head" ng-click="vm.expand(row)" tabindex="0" ng-keydown="$event.key === 'Enter' && vm.expand(row)" role="button">
+          <div>
+            <h3>{{row.opportunity.title}}</h3>
+            <p class="muted">
+              {{row.opportunity.company}}
+              <span ng-if="row.opportunity.location"> · {{row.opportunity.location}}</span>
+              <span ng-if="row.opportunity.experienceRequirement"> · {{row.opportunity.experienceRequirement}}</span>
+              <span ng-if="row.opportunity.educationRequirement"> · {{row.opportunity.educationRequirement}}</span>
+            </p>
+          </div>
+          <div class="pc-right">
+            <div class="match-pill" ng-class="row.matchPercent >= 70 ? 'match-good' : (row.matchPercent >= 40 ? 'match-mid' : 'match-low')">{{row.matchPercent}}% match</div>
+            <span class="pc-chevron">{{vm.selectedRow === row ? '−' : '+'}}</span>
+          </div>
+        </header>
+
+        <div class="pc-body" ng-if="vm.selectedRow === row">
+          <div class="match-grid">
+            <div>
+              <h4>Matched ({{row.matched.length}})</h4>
+              <ul class="pc-list">
+                <li ng-repeat="m in row.matched"><span class="status-tag status-matched">{{m.status}}</span> {{m.name}}</li>
+                <li ng-if="!row.matched.length" class="muted">None</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Partial ({{row.missing.length}})</h4>
+              <ul class="pc-list">
+                <li ng-repeat="m in row.missing"><span class="status-tag status-{{m.status | lowercase}}">{{m.status}}</span> {{m.name}}<span class="muted small" ng-if="m.strength"> — current strength {{m.strength}}%</span></li>
+                <li ng-if="!row.missing.length" class="muted">None</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Unknown ({{row.unknown.length}})</h4>
+              <ul class="pc-list">
+                <li ng-repeat="m in row.unknown"><span class="status-tag status-unknown">{{m.status}}</span> {{m.name}} <span class="muted small">— mentioned but no evidence</span></li>
+                <li ng-if="!row.unknown.length" class="muted">None</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="pc-grid">
+            <div>
+              <h4>Your evidence</h4>
+              <ul class="pc-list">
+                <li ng-repeat="m in row.matched | limitTo:6">{{m.current}} — backed by project/certificate evidence</li>
+                <li ng-if="!row.matched.length" class="muted">No matched skills with evidence.</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Source</h4>
+              <p class="muted small">{{row.opportunity.source || 'unknown'}} · technology requirements: {{(row.opportunity.requiredSkills || []).length ? (row.opportunity.requiredSkills.join(', ')) : 'none recorded'}}</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>

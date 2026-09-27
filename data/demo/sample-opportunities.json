@@ -1,0 +1,35 @@
+{
+  "_notice": "CAREERSPHERE AI — DEMO DATA (development/sample dataset). Sample opportunity listings for match analysis. These are NOT real job postings.",
+  "opportunities": [
+    {
+      "title": "Junior AI Engineer",
+      "company": "Nexa Intelligence Labs",
+      "location": "Bengaluru, India (Hybrid)",
+      "experienceRequirement": "0–2 years",
+      "educationRequirement": "MCA / B.Tech / M.Sc",
+      "requiredSkills": ["Python", "Machine Learning", "TensorFlow", "Data Analysis", "Git", "Docker", "MLOps"],
+      "technologyRequirements": ["Python", "TensorFlow", "Pandas", "Docker"],
+      "source": "demo-opportunities.json (sample listing)"
+    },
+    {
+      "title": "IoT Engineer — Embedded Systems",
+      "company": "GreenField Systems",
+      "location": "Pune, India (On-site)",
+      "experienceRequirement": "1–3 years",
+      "educationRequirement": "B.Tech / MCA",
+      "requiredSkills": ["C", "ESP32", "LoRa", "Sensors", "MQTT", "Python", "Embedded Systems"],
+      "technologyRequirements": ["ESP32", "LoRa", "MQTT"],
+      "source": "demo-opportunities.json (sample listing)"
+    },
+    {
+      "title": "Full Stack Developer (AngularJS)",
+      "company": "Orbit Web Works",
+      "location": "Remote",
+      "experienceRequirement": "1–3 years",
+      "educationRequirement": "Any degree / equivalent experience",
+      "requiredSkills": ["JavaScript", "AngularJS", "Node.js", "REST API", "SQL", "Git"],
+      "technologyRequirements": ["AngularJS", "Node.js", "MySQL"],
+      "source": "demo-opportunities.json (sample listing)"
+    }
+  ]
+}

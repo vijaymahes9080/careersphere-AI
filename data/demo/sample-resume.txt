@@ -1,0 +1,39 @@
+CAREERSPHERE AI — DEMO DATA (sample resume text for testing the extraction pipeline)
+
+CANDIDATE
+Bengaluru, India · candidate.demo@example.com
+
+OBJECTIVE
+I want to become an AI Engineer building data-driven products with Python and machine learning, while staying close to IoT systems where embedded intelligence meets the real world.
+
+EDUCATION
+MCA (Master of Computer Applications), Model Science College, 2024
+BCA, Model Science College, 2022
+
+SKILLS
+Python (advanced), JavaScript, AngularJS, SQL, MySQL, TensorFlow, Flask, Pandas, Git, Docker basics.
+Familiar with REST API design, unit testing and agile teamwork.
+
+EXPERIENCE
+Python Development Intern at TechNova Solutions (3 months). Built REST APIs with Flask, wrote automation scripts in Python, and maintained MySQL tables feeding an internal analytics dashboard. Worked in an agile team with weekly demos.
+
+PROJECTS
+- CareerSphere AI: a local-first career intelligence dashboard built with AngularJS, JavaScript and SVG visualizations. It ingests XML, JSON, CSV and resume text, normalizes everything into one profile, and produces skill strength, evidence and gap analysis.
+- ESP32-based IoT agriculture system using LoRa, GPS and sensors to monitor soil moisture, with readings published over MQTT.
+- AI model benchmarking suite in Python using TensorFlow, scikit-learn, Pandas and Matplotlib.
+- Campus Helpdesk API: Flask + MySQL REST API with token authentication, containerized with Docker.
+
+CERTIFICATIONS
+Python Programming Certification — NPTEL, August 2023
+Azure Fundamentals (AZ-900) Certification — Microsoft, February 2024
+
+ACHIEVEMENTS
+- Winner, Smart India Hackathon internal round 2023
+- Ranked in the top 10 of the college technical quiz 2022
+- Published a paper on IoT-based precision agriculture at the college symposium
+
+INTERESTS
+Interested in robotics and open source contribution; I enjoy technical writing and mentoring juniors.
+
+CAREER GOAL
+Looking to work as an AI Engineer or Machine Learning Engineer where I can ship intelligent features and keep learning MLOps and cloud deployment.

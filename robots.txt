@@ -1,0 +1,4 @@
+# CareerSphere AI — local-only career intelligence app.
+# All processing happens in the browser; there is nothing to index beyond this page.
+User-agent: *
+Allow: /

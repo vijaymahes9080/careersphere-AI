@@ -1,0 +1,77 @@
+<!-- CareerSphere AI — Settings -->
+<section class="page" aria-labelledby="set-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Configuration</p>
+      <h1 id="set-title">Settings</h1>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    <!-- Appearance -->
+    <div class="panel">
+      <div class="panel-head"><h2>Appearance</h2></div>
+      <div class="form-row">
+        <span class="form-label">Theme</span>
+        <div class="chip-row">
+          <button type="button" class="chip" ng-class="{active: vm.state.settings.theme !== 'light'}" ng-click="vm.setTheme('dark')">Dark</button>
+          <button type="button" class="chip" ng-class="{active: vm.state.settings.theme === 'light'}" ng-click="vm.setTheme('light')">Light</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Target role -->
+    <div class="panel">
+      <div class="panel-head"><h2>Target role</h2></div>
+      <div class="form-row">
+        <label class="form-label" for="set-role">Selected role for coverage &amp; gaps</label>
+        <select id="set-role" class="input" ng-model="vm.pendingRole">
+          <option value="">Select target role…</option>
+          <option ng-repeat="r in vm.roles() track by r.id" value="{{r.id}}">{{r.title}}</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn btn-primary" ng-click="vm.saveRole()">Save</button>
+      </div>
+      <p class="muted small">Requirements come only from your imported datasets. CareerSphere does not invent job requirements.</p>
+      <p class="muted small" ng-if="!vm.roles().length">No target roles yet — import a target-role dataset (JSON/CSV).</p>
+    </div>
+
+    <!-- Demo data -->
+    <div class="panel">
+      <div class="panel-head"><h2>Demo data</h2></div>
+      <p class="muted small">Demo datasets are clearly labeled "DEMO DATA" and are never mixed silently with your own data.</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-ghost" ng-click="vm.loadDemo()">Load demo bundle</button>
+        <button type="button" class="btn btn-ghost" ng-if="vm.hasDemo()" ng-click="vm.purgeDemo()">Remove demo data</button>
+      </div>
+    </div>
+
+    <!-- Privacy -->
+    <div class="panel">
+      <div class="panel-head"><h2>Privacy &amp; storage</h2></div>
+      <ul class="pc-list">
+        <li>✓ All processing happens locally in your browser.</li>
+        <li>✓ No career documents are sent to external services.</li>
+        <li>✓ No API keys, no accounts, no tracking.</li>
+        <li>✓ Personal data is not written to logs.</li>
+      </ul>
+      <p class="muted small">Local storage used: <strong>{{vm.storageUsed()}}</strong> (profile + datasets in this browser)</p>
+      <div class="btn-row">
+        <button type="button" class="btn btn-danger" ng-click="vm.clearAll()">Delete all my data</button>
+      </div>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="panel panel-wide">
+      <div class="panel-head"><h2>Architecture pipeline (last run)</h2></div>
+      <div class="pipeline-strip">
+        <div class="pipeline-steps">
+          <span class="pipe-step" ng-repeat="s in vm.pipelineLog()">{{s.step}} <strong>{{s.ms}}ms</strong></span>
+        </div>
+      </div>
+      <p class="muted small">ingestion → parsing → normalization → entity extraction → relationship building → evidence → analysis → visualization. New datasets flow through the same pipeline without dashboard changes.</p>
+    </div>
+  </div>
+</section>

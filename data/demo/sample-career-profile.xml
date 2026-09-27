@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  CAREERSPHERE AI — DEMO DATA (development/sample dataset)
+  Sample career profile in XML format.
+-->
+<careerProfile>
+    <person>
+        <name>Candidate</name>
+        <email>candidate.demo@example.com</email>
+        <location>Bengaluru, India</location>
+        <summary>MCA graduate focused on AI and intelligent systems, with hands-on experience in Python, AngularJS and IoT prototyping.</summary>
+    </person>
+
+    <education>
+        <degree>MCA</degree>
+        <institution>Model Science College</institution>
+        <year>2024</year>
+    </education>
+    <education>
+        <degree>BCA</degree>
+        <institution>Model Science College</institution>
+        <year>2022</year>
+    </education>
+
+    <skills>
+        <skill>
+            <name>Python</name>
+            <category>Programming</category>
+            <level>Advanced</level>
+        </skill>
+        <skill>
+            <name>AngularJS</name>
+            <category>Frontend</category>
+            <level>Intermediate</level>
+        </skill>
+        <skill>
+            <name>JavaScript</name>
+            <category>Frontend</category>
+            <level>Intermediate</level>
+        </skill>
+        <skill>
+            <name>SQL</name>
+            <category>Database</category>
+            <level>Intermediate</level>
+        </skill>
+        <skill>
+            <name>MySQL</name>
+            <category>Database</category>
+            <level>Intermediate</level>
+        </skill>
+        <skill>
+            <name>TensorFlow</name>
+            <category>AI/ML</category>
+            <level>Beginner</level>
+        </skill>
+        <skill>
+            <name>Git</name>
+            <category>Tools</category>
+            <level>Intermediate</level>
+        </skill>
+    </skills>
+
+    <projects>
+        <project>
+            <name>CareerSphere AI</name>
+            <description>Local-first career intelligence platform that ingests XML, JSON, CSV and resume text, then computes skill strength, evidence and gap analysis.</description>
+            <domain>Developer Tools</domain>
+            <year>2025</year>
+            <technology>AngularJS</technology>
+            <technology>JavaScript</technology>
+            <technology>SVG</technology>
+            <technology>AI</technology>
+            <technology>Career Analytics</technology>
+        </project>
+    </projects>
+
+    <certificates>
+        <certificate>
+            <title>Python Programming</title>
+            <issuer>NPTEL</issuer>
+            <date>2023-08</date>
+            <skills>Python</skills>
+        </certificate>
+        <certificate>
+            <title>Azure Fundamentals (AZ-900)</title>
+            <issuer>Microsoft</issuer>
+            <date>2024-02</date>
+            <skills>Azure</skills>
+        </certificate>
+    </certificates>
+
+    <internships>
+        <internship>
+            <company>TechNova Solutions</company>
+            <role>Python Development Intern</role>
+            <duration>3 months</duration>
+            <description>Built REST APIs with Flask, wrote Python automation scripts and maintained MySQL databases for an internal analytics dashboard.</description>
+        </internship>
+    </internships>
+
+    <achievements>
+        <achievement>Winner, Smart India Hackathon internal round 2023</achievement>
+        <achievement>Published a paper on IoT-based precision agriculture in a college symposium</achievement>
+    </achievements>
+
+    <interests>
+        <interest>Robotics</interest>
+        <interest>Open source contribution</interest>
+        <interest>Technical writing</interest>
+    </interests>
+
+    <careerGoals>
+        <goal>Grow into an AI Engineer role where Python, machine learning and data-driven products meet.</goal>
+    </careerGoals>
+
+    <targetRoles>
+        <title>AI Engineer</title>
+        <requirements>
+            <skill>Python</skill>
+            <skill>Machine Learning</skill>
+            <skill>Deep Learning</skill>
+            <skill>TensorFlow</skill>
+            <skill>Data Analysis</skill>
+            <skill>Git</skill>
+        </requirements>
+    </targetRoles>
+
+    <technologies>
+        <technology>Flask</technology>
+        <technology>Pandas</technology>
+        <technology>Matplotlib</technology>
+        <technology>Docker</technology>
+    </technologies>
+</careerProfile>

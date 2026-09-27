@@ -1,0 +1,191 @@
+<!-- CareerSphere AI — Data Center -->
+<section class="page" aria-labelledby="dc-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Ingestion</p>
+      <h1 id="dc-title">Data Center</h1>
+      <p class="muted">XML · JSON · CSV · table · TXT · resume · notes — everything stays on this device.</p>
+    </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-ghost" ng-click="vm.loadDemo()" ng-disabled="vm.busy">Load DEMO data</button>
+      <button type="button" class="btn btn-ghost" ng-if="vm.hasDemo()" ng-click="vm.purgeDemo()">Remove demo data</button>
+    </div>
+  </div>
+
+  <div class="banner banner-demo" ng-if="vm.hasDemo()">
+    <strong>DEMO DATA active.</strong> Demo datasets are labeled and isolated from your own data — remove them anytime with the button above.
+  </div>
+
+  <div class="dc-grid">
+    <!-- Import panel -->
+    <div class="panel">
+      <div class="panel-head"><h2>Import files</h2></div>
+      <label class="dropzone" for="file-input" ng-class="{busy: vm.busy}">
+        <input id="file-input" type="file" multiple class="sr-only"
+               accept=".xml,.json,.csv,.tsv,.txt,.md"
+               onchange="angular.element(this).scope().vm.onFiles(this.files); angular.element(this).scope().$applyAsync();">
+        <span class="dz-icon">⇪</span>
+        <span class="dz-title">Drop files or click to browse</span>
+        <span class="dz-sub">XML, JSON, CSV, TXT, Markdown · max 5 MB each</span>
+      </label>
+
+      <div class="panel-head sub-head"><h2>Paste table or text</h2></div>
+      <div class="form">
+        <div class="form-row">
+          <label class="form-label" for="paste-name">Name (optional)</label>
+          <input id="paste-name" class="input" type="text" placeholder="e.g. my-skills.csv" ng-model="vm.paste.name">
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="paste-format">Format</label>
+          <select id="paste-format" class="input" ng-model="vm.paste.format">
+            <option value="auto">Auto-detect</option>
+            <option value="xml">XML</option>
+            <option value="json">JSON</option>
+            <option value="csv">CSV / table</option>
+            <option value="txt">Text / resume</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="paste-content">Content</label>
+          <textarea id="paste-content" class="input textarea" rows="7" ng-model="vm.paste.content"
+                    placeholder="Paste CSV rows (skill,category,level)…, JSON, XML, a resume, or free-form notes"></textarea>
+        </div>
+        <div class="btn-row">
+          <button type="button" class="btn btn-primary" ng-click="vm.submitPaste()">Import</button>
+          <button type="button" class="btn btn-ghost" ng-click="vm.addNote()">Save as note</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Datasets + quality -->
+    <div class="stack">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Datasets</h2>
+          <span class="muted small">{{vm.datasets().length}} total</span>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table table-datasets">
+            <thead>
+              <tr>
+                <th>Source</th><th>Format</th><th>Records</th><th>Entities detected</th>
+                <th>Errors</th><th>Warnings</th><th>Last processed</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="ds in vm.datasets() track by ds.id" ng-class="{'row-error': ds.status === 'error'}">
+                <td>
+                  <span class="status-mark" ng-class="ds.status">{{vm.statusIcon(ds)}}</span>
+                  {{ds.name}}
+                  <span class="badge badge-demo" ng-if="ds.isDemo">DEMO DATA</span>
+                </td>
+                <td>{{ds.format | uppercase}}</td>
+                <td>{{ds.recordCount}}</td>
+                <td class="small">{{vm.entityLine(ds)}}</td>
+                <td>
+                  <span class="badge badge-err" ng-if="ds.errors.length">{{ds.errors.length}}</span>
+                  <span class="muted" ng-if="!ds.errors.length">—</span>
+                </td>
+                <td>
+                  <span class="badge badge-warn" ng-if="ds.warnings.length">{{ds.warnings.length}}</span>
+                  <span class="muted" ng-if="!ds.warnings.length">—</span>
+                </td>
+                <td class="small muted">{{vm.formatDate(ds.lastProcessed)}}</td>
+                <td class="row-actions">
+                  <button type="button" class="btn btn-mini" ng-click="vm.inspect(ds)" title="Inspect parsed data">Inspect</button>
+                  <button type="button" class="btn btn-mini" ng-click="vm.reprocess(ds)" title="Reprocess dataset">Reprocess</button>
+                  <button type="button" class="btn btn-mini btn-danger" ng-click="vm.remove(ds)" title="Remove dataset">Remove</button>
+                </td>
+              </tr>
+              <tr ng-if="!vm.datasets().length">
+                <td colspan="8" class="muted">No datasets yet. Import files above or load the demo bundle.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="error-list" ng-if="vm.quality().errors.length">
+          <h4>Parse errors</h4>
+          <ul>
+            <li ng-repeat="e in vm.quality().errors">✗ {{e.message}}</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Quality warnings -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Data quality &amp; validation</h2>
+          <span class="badge badge-warn" ng-if="vm.quality().warnings.length">{{vm.quality().warnings.length}} warnings</span>
+        </div>
+        <ul class="quality-list">
+          <li class="q-item" ng-repeat="w in vm.quality().warnings track by $index">
+            <span class="q-mark">!</span><span>{{w.message}}</span>
+          </li>
+        </ul>
+        <p class="muted" ng-if="!vm.quality().warnings.length">No issues detected in current data.</p>
+      </div>
+
+      <!-- Profile summary -->
+      <div class="panel" ng-if="vm.summary()">
+        <div class="panel-head"><h2>Normalized profile</h2></div>
+        <div class="summary-grid">
+          <div><span>{{vm.summary().skills}}</span> skills</div>
+          <div><span>{{vm.summary().projects}}</span> projects</div>
+          <div><span>{{vm.summary().certificates}}</span> certificates</div>
+          <div><span>{{vm.summary().roles}}</span> target roles</div>
+          <div><span>{{vm.summary().opportunities}}</span> opportunities</div>
+          <div><span>{{vm.summary().sources}}</span> sources</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inspection modal -->
+  <div class="modal-backdrop" ng-if="vm.inspecting" ng-click="vm.closeInspect()">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Dataset inspection" ng-click="$event.stopPropagation()">
+      <header class="modal-head">
+        <h3>{{vm.inspecting.dataset.name}} <span class="badge" ng-if="vm.inspecting.dataset.isDemo">DEMO DATA</span></h3>
+        <button type="button" class="nd-close" ng-click="vm.closeInspect()" aria-label="Close">×</button>
+      </header>
+      <div class="modal-body">
+        <p class="muted small">
+          Format: {{vm.inspecting.dataset.format | uppercase}} · Records: {{vm.inspecting.dataset.recordCount}} ·
+          Status: {{vm.inspecting.dataset.status}}
+        </p>
+
+        <div ng-if="vm.inspecting.dataset.errors.length" class="error-list">
+          <h4>Errors</h4>
+          <ul><li ng-repeat="e in vm.inspecting.dataset.errors">{{e}}</li></ul>
+        </div>
+
+        <h4>Extraction results <span class="muted small">(entities detected in this source)</span></h4>
+        <div ng-if="vm.inspecting.extraction" class="extract-grid">
+          <div ng-if="vm.inspecting.extraction.skills.length"><strong>Skills</strong><span class="tag" ng-repeat="s in vm.inspecting.extraction.skills">{{s}}</span></div>
+          <div ng-if="vm.inspecting.extraction.technologies.length"><strong>Technologies</strong><span class="tag" ng-repeat="t in vm.inspecting.extraction.technologies">{{t}}</span></div>
+          <div ng-if="vm.inspecting.extraction.roles.length"><strong>Roles</strong><span class="tag" ng-repeat="r in vm.inspecting.extraction.roles">{{r}}</span></div>
+          <div ng-if="vm.inspecting.extraction.education.length"><strong>Education</strong><span class="tag" ng-repeat="e in vm.inspecting.extraction.education">{{e}}</span></div>
+          <div ng-if="vm.inspecting.extraction.certifications.length"><strong>Certifications</strong><span class="tag" ng-repeat="c in vm.inspecting.extraction.certifications">{{c}}</span></div>
+          <div ng-if="vm.inspecting.extraction.achievements.length"><strong>Achievements</strong><span class="tag" ng-repeat="a in vm.inspecting.extraction.achievements">{{a}}</span></div>
+          <div ng-if="vm.inspecting.extraction.domains.length"><strong>Domains</strong><span class="tag" ng-repeat="d in vm.inspecting.extraction.domains">{{d}}</span></div>
+          <div ng-if="vm.inspecting.extraction.goals.length"><strong>Goals</strong><span class="tag" ng-repeat="g in vm.inspecting.extraction.goals">{{g}}</span></div>
+          <div ng-if="vm.inspecting.extraction.interests.length"><strong>Interests</strong><span class="tag" ng-repeat="i in vm.inspecting.extraction.interests">{{i}}</span></div>
+          <div ng-if="vm.inspecting.extraction.yearsOfExperience"><strong>Experience</strong><span class="tag">{{vm.inspecting.extraction.yearsOfExperience}} years</span></div>
+          <div ng-if="vm.inspecting.extraction.keywords.length"><strong>Keywords</strong><span class="tag tag-soft" ng-repeat="k in vm.inspecting.extraction.keywords">{{k}}</span></div>
+        </div>
+        <p class="muted" ng-if="!vm.inspecting.extraction">No extraction stored for this source (structured format — records are listed via entities detected).</p>
+
+        <h4>Parsed data preview</h4>
+        <pre class="code-preview">{{vm.inspecting.parsedPreview}}</pre>
+
+        <div ng-if="vm.inspecting.dataset.warnings.length">
+          <h4>Warnings</h4>
+          <ul class="pc-list"><li ng-repeat="w in vm.inspecting.dataset.warnings">{{w}}</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

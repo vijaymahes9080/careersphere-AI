@@ -1,0 +1,44 @@
+{
+  "_notice": "CAREERSPHERE AI — DEMO DATA (development/sample dataset). Sample project portfolio in JSON format.",
+  "projects": [
+    {
+      "name": "CareerSphere AI",
+      "description": "A local-first Career Intelligence & Personal Growth Platform built with AngularJS. Ingests XML, JSON, CSV and resume text, normalizes them into a single career profile, extracts entities, builds a relationship graph and computes skill strength, evidence strength, coverage and career readiness — all rendered through interactive SVG visualizations.",
+      "technologies": ["AngularJS", "JavaScript", "SVG", "D3-style layouts", "AI", "Career Analytics", "HTML5", "CSS3"],
+      "domain": "Developer Tools",
+      "year": "2025",
+      "skillsDemonstrated": ["AngularJS", "JavaScript", "Data Processing", "Visualization", "AI", "Career Analytics"]
+    },
+    {
+      "name": "ESP32 IoT Agriculture System",
+      "description": "Developed an ESP32-based IoT agriculture system using LoRa, GPS and sensors to monitor soil moisture and micro-climate across a farm and push readings to a dashboard over MQTT.",
+      "technologies": ["ESP32", "LoRa", "GPS", "Sensors", "MQTT", "C", "IoT"],
+      "domain": "Agriculture",
+      "year": "2024",
+      "skillsDemonstrated": ["ESP32", "IoT", "LoRa", "GPS", "MQTT", "Embedded C"]
+    },
+    {
+      "name": "AI Model Benchmarking Suite",
+      "description": "Benchmarked classification models (logistic regression, random forest, small neural net) on tabular datasets, tracking accuracy, precision/recall and training time with reproducible Python scripts and Matplotlib reports.",
+      "technologies": ["Python", "TensorFlow", "scikit-learn", "Pandas", "NumPy", "Matplotlib"],
+      "domain": "Machine Learning",
+      "year": "2024",
+      "skillsDemonstrated": ["Python", "TensorFlow", "Machine Learning", "Data Analysis"]
+    },
+    {
+      "name": "Campus Helpdesk API",
+      "description": "Flask REST API with token auth and MySQL storage for a student helpdesk, consumed by an AngularJS front end. Includes unit tests and Docker packaging.",
+      "technologies": ["Python", "Flask", "MySQL", "REST API", "Docker", "JavaScript"],
+      "domain": "Education",
+      "year": "2023",
+      "skillsDemonstrated": ["Python", "Flask", "SQL", "REST API", "Docker"]
+    },
+    {
+      "name": "Personal Portfolio Website",
+      "description": "Responsive portfolio site with dark/light themes.",
+      "technologies": ["HTML", "CSS", "JavaScript"],
+      "domain": "Web",
+      "year": "2023"
+    }
+  ]
+}

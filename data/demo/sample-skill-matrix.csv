@@ -1,0 +1,11 @@
+skill,category,level,notes
+Python,Programming,Advanced,"Primary language for ML and backend work"
+JavaScript,Frontend,Intermediate,"DOM manipulation and AngularJS apps"
+AngularJS,Frontend,Intermediate,"Single-page dashboard apps"
+SQL,Database,Intermediate,"Queries, joins, window functions"
+MySQL,Database,Intermediate,"Schema design for projects"
+TensorFlow,AI/ML,Beginner,"Model building basics, needs deeper study"
+Git,Tools,Intermediate,"Branching, PRs, conflict resolution"
+Pandas,AI/ML,Intermediate,"Data wrangling and analysis"
+Docker,Cloud,Beginner,"Containerizing small apps"
+Communication,Soft Skills,Intermediate,"Presentations and technical writing"

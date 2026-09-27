@@ -1,0 +1,103 @@
+<!-- CareerSphere AI — Projects -->
+<section class="page" aria-labelledby="proj-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Intelligence</p>
+      <h1 id="proj-title">Project Intelligence</h1>
+      <p class="muted">What each project demonstrates, who it connects to, and what documentation is missing.</p>
+    </div>
+    <div class="page-actions" ng-if="vm.stats()">
+      <input type="search" class="input" placeholder="Search projects…" ng-model="vm.search" aria-label="Search projects">
+    </div>
+  </div>
+
+  <div ng-if="!vm.hasData()" class="panel empty-state">
+    <h2>No projects imported</h2>
+    <p>Import a projects JSON/CSV dataset (or a resume that lists projects) to see project intelligence.</p>
+    <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+  </div>
+
+  <div ng-if="vm.hasData()">
+    <div class="stat-row">
+      <div class="stat panel"><span class="stat-v">{{vm.stats().total}}</span><span class="stat-k">Projects</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.stats().documented}}</span><span class="stat-k">Fully documented</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.stats().withSkills}}</span><span class="stat-k">With skill mapping</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.stats().withRoles}}</span><span class="stat-k">Linked to target roles</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.stats().strength}}%</span><span class="stat-k">Project strength (est.)</span></div>
+    </div>
+
+    <div class="project-list">
+      <article class="panel project-card" ng-repeat="p in vm.projects() track by p.name" ng-class="{expanded: vm.selectedProject === p}">
+        <header class="pc-head" ng-click="vm.expand(p)" tabindex="0" ng-keydown="$event.key === 'Enter' && vm.expand(p)" role="button">
+          <div>
+            <h3>{{p.name}}</h3>
+            <p class="pc-tech">
+              <span class="tag" ng-repeat="t in p.technologies">{{t}}</span>
+            </p>
+          </div>
+          <div class="pc-right">
+            <span class="badge" title="{{p.complexityNote}}">{{p.complexity}} complexity</span>
+            <span class="badge" ng-if="p.relatedRoles.length">{{p.relatedRoles.length}} role link<span ng-if="p.relatedRoles.length > 1">s</span></span>
+            <span class="badge badge-err" ng-if="p.missingDocumentation.length">{{p.missingDocumentation.length}} doc gaps</span>
+            <span class="pc-chevron">{{vm.selectedProject === p ? '−' : '+'}}</span>
+          </div>
+        </header>
+
+        <div class="pc-body" ng-if="vm.selectedProject === p">
+          <p class="pc-desc">{{p.description || 'No description provided.'}}</p>
+
+          <div class="pc-grid">
+            <div>
+              <h4>Skills demonstrated</h4>
+              <ul class="pc-list">
+                <li ng-repeat="s in p.skillsDemonstrated">
+                  {{s.name}} <span class="muted small">— {{s.level || 'level not provided'}} · strength {{s.strength}}%</span>
+                </li>
+                <li ng-if="!p.skillsDemonstrated.length" class="muted">No skill mapping could be derived from available data.</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Related target roles</h4>
+              <ul class="pc-list">
+                <li ng-repeat="r in p.relatedRoles">{{r.title}}</li>
+                <li ng-if="!p.relatedRoles.length" class="muted">
+                  {{vm.state.profile.targetRoles.length ? 'No overlap with configured role requirements.' : 'No target roles configured.'}}
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4>Missing documentation</h4>
+              <ul class="pc-list">
+                <li ng-repeat="m in p.missingDocumentation" class="warn-item">{{m}}</li>
+                <li ng-if="!p.missingDocumentation.length" class="ok-item">Complete</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Improvement opportunities</h4>
+              <ul class="pc-list">
+                <li ng-repeat="i in p.improvementOpportunities">{{i}}</li>
+                <li ng-if="!p.improvementOpportunities.length" class="muted">Nothing flagged.</li>
+              </ul>
+            </div>
+          </div>
+
+          <p class="muted small">
+            <strong>Evidence:</strong> this project supports
+            {{p.skillsDemonstrated.length}} skill(s) · source: {{p.source}} · complexity {{p.complexity}} ({{p.complexityNote}})
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <!-- Project-to-skill relationship graph -->
+    <div class="panel" ng-if="vm.network() && vm.network().nodes.length">
+      <div class="panel-head">
+        <h2>Project → Skill relationship graph</h2>
+        <span class="muted small">click a node for details</span>
+      </div>
+      <cs-network data="vm.network()" on-select="vm.onSelectNetwork(node)"></cs-network>
+      <cs-node-detail node="vm.selectedNode"></cs-node-detail>
+    </div>
+  </div>
+</section>

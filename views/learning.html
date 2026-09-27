@@ -1,0 +1,106 @@
+<!-- CareerSphere AI — Learning -->
+<section class="page" aria-labelledby="learn-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Roadmap</p>
+      <h1 id="learn-title">Learning Intelligence</h1>
+      <p class="muted">Current skills → gaps → learning topics → projects → evidence → improved profile.</p>
+    </div>
+  </div>
+
+  <div ng-if="!vm.state.datasets.length" class="panel empty-state">
+    <h2>No data imported</h2>
+    <p>A learning roadmap is generated from real skill gaps — import your profile and a target-role dataset first.</p>
+    <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+  </div>
+
+  <div ng-if="vm.state.datasets.length">
+    <!-- Flow strip -->
+    <div class="flow-strip panel">
+      <div class="flow-node"><span class="flow-k">Current skills</span><span class="flow-v">{{vm.currentSkills().length}} strong</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node"><span class="flow-k">Skill gaps</span><span class="flow-v">{{vm.gapSkills().length}}</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node"><span class="flow-k">Learning topics</span><span class="flow-v">{{vm.plan().length}}</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node"><span class="flow-k">Progress</span><span class="flow-v">{{vm.progress()}}%</span></div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node"><span class="flow-k">Evidence</span><span class="flow-v">{{vm.evidenceMilestones().length}} new</span></div>
+    </div>
+
+    <div class="split-2">
+      <!-- Roadmap -->
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Learning roadmap</h2>
+          <div class="panel-actions" ng-if="vm.plan().length">
+            <cs-ring value="vm.progress()" label="Progress" size="sm"></cs-ring>
+          </div>
+        </div>
+
+        <div class="empty-inline warn" ng-if="!vm.hasRole()">
+          <p><strong>No target role with requirement data selected.</strong> The roadmap is generated from gaps against your selected role's imported requirements — CareerSphere never invents syllabi from nothing. Import a role dataset, then return here.</p>
+        </div>
+
+        <ol class="roadmap" ng-if="vm.plan().length">
+          <li class="week-card" ng-repeat="t in vm.plan() track by t.id" ng-class="{done: t.done}">
+            <div class="week-head">
+              <span class="week-badge">Week {{t.week}}</span>
+              <label class="check">
+                <input type="checkbox" ng-model="t.done" ng-change="vm.toggle(t)">
+                <span>{{t.title}}</span>
+              </label>
+              <span class="status-tag status-{{t.status | lowercase}}">{{t.status}}</span>
+            </div>
+            <p class="week-meta muted small">for {{t.role}} · requirement source: {{t.source}}</p>
+            <ul class="week-steps">
+              <li ng-repeat="step in t.steps">{{step}}</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+
+      <div class="stack">
+        <!-- Gap → topic mapping -->
+        <div class="panel">
+          <div class="panel-head"><h2>Identified gaps</h2></div>
+          <table class="table" ng-if="vm.gapSkills().length">
+            <thead><tr><th>Skill</th><th>Status</th><th>Role</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr ng-repeat="g in vm.gapSkills()">
+                <td><strong>{{g.skillName}}</strong></td>
+                <td><span class="status-tag status-{{g.status | lowercase}}">{{g.status}}</span></td>
+                <td>{{vm.coverage().role.title}}</td>
+                <td class="muted small">{{g.source}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="muted" ng-if="!vm.gapSkills().length">
+            {{vm.hasRole() ? 'No gaps detected against the selected role — all requirements are strong/found.' : 'Requires a target role with requirement data.'}}
+          </p>
+        </div>
+
+        <!-- Evidence milestones -->
+        <div class="panel">
+          <div class="panel-head"><h2>Recent evidence milestones</h2></div>
+          <ul class="pc-list" ng-if="vm.evidenceMilestones().length">
+            <li ng-repeat="m in vm.evidenceMilestones()">{{m}}</li>
+          </ul>
+          <p class="muted" ng-if="!vm.evidenceMilestones().length">Complete roadmap topics and add projects to grow your evidence.</p>
+          <a class="btn btn-ghost" href="#/evidence">Open Evidence view →</a>
+        </div>
+
+        <!-- Improved profile preview -->
+        <div class="panel">
+          <div class="panel-head"><h2>Improved career profile</h2></div>
+          <p class="muted small">How your profile improves as evidence accumulates:</p>
+          <ul class="pc-list">
+            <li ng-repeat="s in vm.currentSkills()">{{s.name}} — {{s.strength}}% ({{s.evidenceCount}} evidence)</li>
+            <li ng-if="!vm.currentSkills().length" class="muted">No strong skills yet — start with the roadmap above.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

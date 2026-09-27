@@ -1,0 +1,155 @@
+<!-- CareerSphere AI — Skill Intelligence -->
+<section class="page" aria-labelledby="skills-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Analysis</p>
+      <h1 id="skills-title">Skill Intelligence</h1>
+      <p class="muted">Every strength score is a CareerSphere analytical estimate built from proficiency + evidence.</p>
+    </div>
+  </div>
+
+  <div ng-if="!vm.stats() || !vm.stats().total" class="panel empty-state">
+    <h2>No skills detected yet</h2>
+    <p>Import a resume, skill matrix (CSV) or project data in the Data Center.</p>
+    <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+  </div>
+
+  <div ng-if="vm.stats() && vm.stats().total">
+
+    <!-- Stats -->
+    <div class="stat-row">
+      <div class="stat panel"><span class="stat-v">{{vm.stats().total}}</span><span class="stat-k">Skills</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.stats().withLevel}}</span><span class="stat-k">With level</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.stats().withEvidence}}</span><span class="stat-k">With evidence</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.stats().unverified}}</span><span class="stat-k">Unverified</span></div>
+      <div class="stat panel"><span class="stat-v">{{vm.stats().avgStrength}}%</span><span class="stat-k">Avg strength</span></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="panel filter-bar" role="toolbar" aria-label="Skill filters">
+      <div class="chip-row">
+        <button type="button" class="chip" ng-repeat="f in vm.filters()"
+                ng-class="{active: vm.state.settings.skillFilter === f}"
+                ng-click="vm.setFilter(f)">{{f}}</button>
+      </div>
+      <div class="filter-right">
+        <label class="sr-only" for="skill-search">Search skills</label>
+        <input id="skill-search" type="search" class="input" placeholder="Search skills…" ng-model="vm.search">
+        <label class="sr-only" for="skill-sort">Sort skills</label>
+        <select id="skill-sort" class="input" ng-model="vm.sortBy">
+          <option value="strength">Sort: strength</option>
+          <option value="name">Sort: name</option>
+          <option value="evidence">Sort: evidence</option>
+          <option value="level">Sort: level</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="split-2">
+      <!-- Skill matrix -->
+      <div class="panel">
+        <div class="panel-head"><h2>Skill matrix</h2><span class="muted small">{{vm.skills().length}} shown</span></div>
+        <table class="table table-skills">
+          <thead>
+            <tr><th>Skill</th><th>Category</th><th>Level</th><th>Evidence</th><th>Strength</th></tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="s in vm.skills() track by s.id" ng-click="vm.toggleRow(s)" tabindex="0"
+                ng-keydown="$event.key === 'Enter' && vm.toggleRow(s)"
+                ng-class="{selected: vm.selectedRow === s.id}">
+              <td>
+                <strong>{{s.name}}</strong>
+                <span class="conf conf-{{s.confidence | lowercase}}" title="{{s.confidence}}">{{s.confidence === 'Confirmed' ? '✓' : '?'}}</span>
+              </td>
+              <td><span class="cat-tag">{{s.category}}</span></td>
+              <td>{{s.level || '—'}}<span ng-if="!s.level" class="muted"> unverified</span></td>
+              <td>{{s.evidenceCount}} <span class="muted small" ng-if="s.evidenceTypes.length">({{s.evidenceTypes.join(', ')}})</span></td>
+              <td>
+                <div class="mini-bar" title="{{s.strengthNote}}">
+                  <div class="mini-fill" ng-style="{width: s.strength + '%'}" ng-class="strengthClass(s.strength)"></div>
+                </div>
+                <span class="small">{{s.strength}}%</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="muted" ng-if="!vm.skills().length">No skills match this filter.</p>
+      </div>
+
+      <!-- Radar + detail -->
+      <div class="stack">
+        <div class="panel">
+          <div class="panel-head"><h2>Category distribution</h2></div>
+          <cs-radar labels="vm.radar().labels" values="vm.radar().values" title="Category average skill strength"></cs-radar>
+          <ul class="cat-bars">
+            <li ng-repeat="c in vm.categories()">
+              <span class="cat-bar-label">{{c.category}}</span>
+              <div class="bar"><div class="bar-fill" ng-style="{width: c.avgStrength + '%'}"></div></div>
+              <span class="cat-bar-meta">{{c.count}} skills · avg {{c.avgStrength}}%</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="panel detail-panel">
+          <div class="panel-head"><h2>Skill detail</h2></div>
+          <p class="muted" ng-if="!vm.selectedNode">Click a skill row to inspect its evidence chain and next action.</p>
+          <cs-node-detail node="vm.selectedNode"></cs-node-detail>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Gap Analysis -->
+    <div class="panel gap-panel" id="gap-analysis">
+      <div class="panel-head">
+        <h2>Skill Gap Analysis</h2>
+        <div class="panel-actions">
+          <label class="sr-only" for="role-select">Target role</label>
+          <select id="role-select" class="input" ng-model="vm.state.settings.selectedRoleId" ng-change="vm.selectRole()">
+            <option value="">Select target role…</option>
+            <option ng-repeat="r in vm.roles() track by r.id" value="{{vm.roleId(r)}}">{{r.title}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div ng-if="!vm.coverage()" class="empty-inline">
+        <p><strong>No target roles configured.</strong> Import a target-role dataset (JSON/CSV) in the Data Center — CareerSphere does not invent job requirements.</p>
+      </div>
+
+      <div ng-if="vm.coverage() && vm.coverage().coveragePercent === null" class="empty-inline warn">
+        <p>{{vm.coverage().message}}</p>
+      </div>
+
+      <div ng-if="vm.coverage() && vm.coverage().coveragePercent !== null">
+        <div class="coverage-head">
+          <cs-ring value="vm.coverage().coveragePercent" label="Coverage" size="sm"></cs-ring>
+          <div class="status-counts">
+            <div class="sc" ng-repeat="sc in vm.statusCounts()" ng-class="sc.cls">
+              <span class="sc-v">{{sc.count}}</span><span class="sc-k">{{sc.label}}</span>
+            </div>
+          </div>
+          <div class="coverage-src muted small">
+            Role: {{vm.coverage().role.title}} · requirement source: {{vm.coverage().source}}
+          </div>
+        </div>
+
+        <table class="table table-gap">
+          <thead>
+            <tr><th>Requirement</th><th>Req. level</th><th>Status</th><th>Current</th><th>Evidence</th><th>Source</th></tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="r in vm.coverage().requirements" class="row-{{r.status | lowercase}}">
+              <td><strong>{{r.skillName}}</strong></td>
+              <td>{{r.requiredLevel || '—'}}</td>
+              <td><span class="status-tag status-{{r.status | lowercase}}">{{r.status}}</span></td>
+              <td>{{r.current ? (r.current.level || 'Unverified') + ' · ' + r.current.strength + '%' : 'not in profile'}}</td>
+              <td>{{r.current ? r.current.evidenceCount : 0}}</td>
+              <td class="muted small">{{r.source}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="muted small">Coverage = weighted sum of statuses (STRONG 1.0, FOUND 0.75, PARTIAL 0.4, UNVERIFIED 0.25, MISSING 0) ÷ total requirements. CareerSphere analytical estimate.</p>
+      </div>
+    </div>
+  </div>
+</section>

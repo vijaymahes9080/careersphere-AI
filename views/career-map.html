@@ -1,0 +1,80 @@
+<!-- CareerSphere AI — Career Map -->
+<section class="page" aria-labelledby="cmap-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Visualization</p>
+      <h1 id="cmap-title">Career Map</h1>
+      <p class="muted">Your career journey and pathway options — derived from your data, not predictions.</p>
+    </div>
+  </div>
+
+  <div ng-if="!vm.state.datasets.length" class="panel empty-state">
+    <h2>No data to map yet</h2>
+    <p>Import data in the Data Center to build your career map.</p>
+    <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+  </div>
+
+  <!-- Career journey stages -->
+  <div class="panel" ng-if="vm.state.datasets.length">
+    <div class="panel-head">
+      <h2>Career journey</h2>
+      <span class="muted small">Current state → skill development → projects → experience → target role → future</span>
+    </div>
+    <ol class="journey" ng-if="vm.journey().length">
+      <li class="j-stage" ng-repeat="stage in vm.journey()">
+        <div class="j-stage-head">
+          <span class="j-index">{{$index + 1}}</span>
+          <h3>{{stage.title}}</h3>
+        </div>
+        <ul class="j-items">
+          <li ng-repeat="item in stage.items track by $index" ng-class="{'j-muted': item.indexOf('No ') === 0 || item.indexOf('not ') > -1 || item.indexOf('Import') === 0}">{{item}}</li>
+        </ul>
+      </li>
+    </ol>
+  </div>
+
+  <!-- Career pathways -->
+  <div class="panel" ng-if="vm.paths().paths.length">
+    <div class="panel-head"><h2>Career pathways</h2></div>
+    <div class="paths-grid">
+      <div class="path-card" ng-repeat="path in vm.paths().paths">
+        <h4>{{path.name}}</h4>
+        <ol class="path-steps">
+          <li ng-repeat="step in path.steps" class="step-{{step.status}}" title="{{step.detail}}">
+            <span class="step-mark">{{step.status === 'done' ? '✓' : (step.status === 'progress' ? '◐' : (step.status === 'target' ? '◎' : '○'))}}</span>
+            <span class="step-label">{{step.label}}</span>
+            <span class="step-detail muted small">{{step.detail}}</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <p class="muted small">{{vm.paths().note}}</p>
+  </div>
+
+  <!-- Map + detail -->
+  <div class="split-2" ng-if="vm.state.datasets.length">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Intelligence map</h2>
+        <span class="muted small">click a group to expand · click a node for details</span>
+      </div>
+      <cs-intel-map data="vm.intelMap()" on-select="vm.onSelect(node)" selected-id="vm.selectedNode.id"></cs-intel-map>
+    </div>
+    <div class="panel detail-panel">
+      <div class="panel-head"><h2>Node details</h2></div>
+      <p class="muted" ng-if="!vm.selectedNode">Select any node to view description, evidence, sources, confidence and recommended action.</p>
+      <cs-node-detail node="vm.selectedNode"></cs-node-detail>
+    </div>
+  </div>
+
+  <!-- Skill ↔ relationships -->
+  <div class="panel" ng-if="vm.network() && vm.network().nodes.length">
+    <div class="panel-head">
+      <h2>Skill ↔ Project network</h2>
+      <span class="muted small">lines connect skills to the projects that demonstrate them</span>
+    </div>
+    <cs-network data="vm.network()" on-select="vm.onSelect(node)"></cs-network>
+  </div>
+
+</section>
