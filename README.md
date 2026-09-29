@@ -67,15 +67,17 @@ Access the continuously deployed web application instantly:
 👉 **[https://vijaymahes9080.github.io/careersphere-AI/](https://vijaymahes9080.github.io/careersphere-AI/)**
 
 ### Option B: Run Locally
-Clone the repository and launch the built-in zero-dependency Node server:
+Clone the repository and launch with the Windows 1-click batch launcher or Node:
 
 ```bash
-git clone https://github.com/vijaymahes9080/careersphere-AI.git
-cd careersphere-AI
+# On Windows, simply double-click run.bat or run:
+run.bat
+
+# Or run with Node directly:
 node server.js
 ```
 
-Open **[http://localhost:8080](http://localhost:8080)** in your browser.
+Open **[http://localhost:8080](http://localhost:8080)** in your browser (launched automatically by `run.bat`).
 
 ### Option C: Any Static Server
 ```bash
