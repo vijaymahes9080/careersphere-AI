@@ -1,5 +1,7 @@
 # CareerSphere AI — Career Intelligence & Personal Growth Platform
 
+🌐 **Live Demo:** [https://vijaymahes9080.github.io/careersphere-AI/](https://vijaymahes9080.github.io/careersphere-AI/)
+
 A data-first, **local-only** single-page application that ingests your career data
 (XML / JSON / CSV / TXT / resume), normalizes it into one profile, extracts entities
 with evidence, and turns it into interactive analytics you can explore.
@@ -8,6 +10,13 @@ No build step. No CDN. No API keys. No server-side storage — everything runs i
 your browser and stays there.
 
 ---
+
+## 🚀 Live Hosting & Deployment
+
+The application is fully hosted and accessible worldwide at:
+👉 **[https://vijaymahes9080.github.io/careersphere-AI/](https://vijaymahes9080.github.io/careersphere-AI/)**
+
+Continuous deployment is configured via GitHub Actions (`.github/workflows/deploy.yml`), automatically updating the live site on every commit to `main`.
 
 ## Quick start
 
