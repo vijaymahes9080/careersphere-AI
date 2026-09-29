@@ -1,50 +1,88 @@
 # CareerSphere AI — Career Intelligence & Personal Growth Platform
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-success?style=for-the-badge&logo=githubpages&logoColor=white)](https://vijaymahes9080.github.io/careersphere-AI/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
-[![GitHub Actions](https://img.shields.io/badge/Deploy-GitHub%20Pages-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/vijaymahes9080/careersphere-AI/actions)
-[![Zero Dependency](https://img.shields.io/badge/Dependencies-Zero-informational?style=for-the-badge)](package.json)
-[![Privacy First](https://img.shields.io/badge/Privacy-100%25%20Local-purple?style=for-the-badge)](README.md#privacy--security)
+<p align="center">
+  <img src="docs/images/hero-light.png" alt="CareerSphere AI Light Theme Showcase" width="100%" />
+</p>
 
-A data-first, **local-only** career intelligence single-page application that ingests multi-format career records (XML, JSON, CSV, TXT resumes, notes), normalizes them into a unified profile schema, extracts verifiable entities with direct evidence, and produces interactive visual analytics.
+<p align="center">
+  <a href="https://vijaymahes9080.github.io/careersphere-AI/"><img src="https://img.shields.io/badge/🌐_Live_Demo-Explore_Online-2563eb?style=for-the-badge" alt="Live Demo" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-10b981.svg?style=for-the-badge" alt="License" /></a>
+  <a href="https://github.com/vijaymahes9080/careersphere-AI/actions"><img src="https://img.shields.io/badge/Deploy-GitHub_Pages-6366f1?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Pages CI/CD" /></a>
+  <a href="#privacy--local-first-security"><img src="https://img.shields.io/badge/Privacy-100%25_Local_First-8b5cf6?style=for-the-badge" alt="Privacy First" /></a>
+  <a href="package.json"><img src="https://img.shields.io/badge/Dependencies-Zero-0ea5e9?style=for-the-badge" alt="Zero Dependency" /></a>
+</p>
 
-🌐 **Try it Live:** [https://vijaymahes9080.github.io/careersphere-AI/](https://vijaymahes9080.github.io/careersphere-AI/)
+A data-first, **local-only** single-page application that unifies your disparate career records (XML, JSON, CSV, TXT resumes, notes), normalizes them into one cohesive profile, extracts verifiable entities with direct evidence, and produces rich, interactive visual analytics.
 
----
-
-## ⚡ Highlights
-
-- **100% Local & Private:** Runs entirely inside your browser. No server-side databases, no external API keys, and no telemetry.
-- **Multi-Format Ingestion:** Ingests XML, JSON, tabular CSV, plain text resumes, and notes simultaneously.
-- **Traceable Evidence:** Every skill, project link, and analytical score links directly to source document citations.
-- **Zero-Dependency Core:** Pure client-side architecture with built-in SVG visualizations (radar charts, intelligence radial maps, relationship networks, readiness rings).
-- **Print-Ready Reports:** Generates 5 distinct printable executive career reports and HTML downloads with clean `@media print` styling.
-- **Dark & Light Mode:** Seamlessly toggles theme with persistent user preferences in `localStorage`.
+> 🚀 **Experience the Live App:** [https://vijaymahes9080.github.io/careersphere-AI/](https://vijaymahes9080.github.io/careersphere-AI/)  
+> *No account required. All processing executes 100% inside your local browser.*
 
 ---
 
-## 🚀 Live Hosting & Quick Start
+## 🌟 Visual Showcase (Light Theme)
 
-### 1. Instant Online Access
-The application is continuously deployed via GitHub Actions:
+CareerSphere AI features an elegant, daylight-optimized **Light Theme** engineered with soft contrast, glassmorphism card surfaces, and handcrafted SVG data visualizations.
+
+### 1. Overview Dashboard & Career Intelligence Map
+The central command center presents your real-time **Career Readiness Score Ring**, individual factor contributions, key profile metrics, and the orbital **Career Intelligence Map**.
+
+<p align="center">
+  <img src="docs/images/overview-light.png" alt="CareerSphere AI Overview Dashboard in Light Theme" width="95%" />
+</p>
+
+* **Career Readiness Ring:** Analytical breakdown across verified skills, demonstrated experience, completed projects, and audit evidence.
+* **Orbital Intelligence Map:** Dynamic radial network visualizing competency clusters and interconnected milestone nodes.
+* **Instant Action:** The global `⚡ Analyze My Career` trigger executes the full 7-stage analytical pipeline on demand.
+
+---
+
+### 2. Skill Intelligence & SVG Competency Radar
+Deep dive into your technical and soft skill portfolio. Benchmark your verified abilities against market requirements and target career roles.
+
+<p align="center">
+  <img src="docs/images/skills-radar-light.png" alt="Skill Intelligence and SVG Radar Chart in Light Theme" width="95%" />
+</p>
+
+* **Handcrafted SVG Radar Chart:** Multi-axis polygon plotting competencies across Frontend Architecture, Backend Systems, System Design, Cloud Infrastructure, AI/ML Ingestion, and Data Quality.
+* **Target Role Gap Analysis:** Direct side-by-side gap table showing status badges (`STRONG`, `VERIFIED`, `PARTIAL`, `MISSING`) against benchmark roles like *Staff AI Engineer*.
+* **Smart Filter Matrix:** Real-time search by category pills (Languages, Frameworks, Cloud, Data & AI, DevOps).
+
+---
+
+## ⚡ Key Highlights
+
+* 🛡️ **100% Local-First & Private:** Everything runs purely in client-side memory and `localStorage`. No server-side databases, no external API keys, and zero telemetry.
+* 📑 **Multi-Format Ingestion:** Ingests XML, JSON, CSV skill matrices, plain-text resumes, and freeform notes concurrently.
+* 🔍 **Evidence-Backed Audit Trails:** Every skill claim and readiness rating links directly to a verifiable citation in your source files.
+* 📐 **Zero-Dependency Core:** Powered by vanilla JS / lightweight AngularJS with native SVG charts (no bulky chart libraries or CDN latency).
+* 📄 **Executive Print Dossiers:** 5 print-ready career summaries and downloadable HTML dossiers styled with `@media print`.
+* 🌗 **Fluid Theme Switching:** Instant toggle between crisp Light Theme and sleek Dark Mode with persistent state.
+
+---
+
+## 🚀 Quick Start
+
+### Option A: Use it Online (Recommended)
+Access the continuously deployed web application instantly:
 👉 **[https://vijaymahes9080.github.io/careersphere-AI/](https://vijaymahes9080.github.io/careersphere-AI/)**
 
-### 2. Run Locally with Node.js
-Clone the repository and run the built-in zero-dependency static server:
+### Option B: Run Locally
+Clone the repository and launch the built-in zero-dependency Node server:
 
 ```bash
 git clone https://github.com/vijaymahes9080/careersphere-AI.git
 cd careersphere-AI
 node server.js
 ```
+
 Open **[http://localhost:8080](http://localhost:8080)** in your browser.
 
-### 3. Alternative Local Servers
+### Option C: Any Static Server
 ```bash
-# Using npx
+# Using npx serve
 npx serve .
 
-# Using Python 3
+# Using Python
 python -m http.server 8080
 
 # Using Docker
@@ -52,31 +90,35 @@ docker build -t careersphere-ai .
 docker run -p 8080:8080 careersphere-ai
 ```
 
-> **First run?** Navigate to **Data Center → Load DEMO data** to immediately populate the workspace with labeled sample profiles, projects, skills, and target roles.
+> 💡 **First Time?** Go to **Data Center → Load DEMO data** to immediately populate the workspace with pre-configured sample profiles, projects, skills, and target roles.
 
 ---
 
-## 🔄 The Intelligence Pipeline
+## 🔄 The 7-Stage Intelligence Pipeline
 
-Every analytical view is powered by an inspectable, deterministic data pipeline:
+CareerSphere AI is built upon an inspectable, deterministic data pipeline that guarantees full auditability:
 
+```mermaid
+graph LR
+    A[Data Ingestion<br/><i>XML, JSON, CSV, TXT</i>] --> B[Multi-Format<br/>Parsing]
+    B --> C[Normalization<br/><i>Unified Schema</i>]
+    C --> D[Entity Extraction<br/><i>Skills & Roles</i>]
+    D --> E[Relationship Graph<br/><i>Project-to-Skill Links</i>]
+    E --> F[Analysis Engine<br/><i>Readiness & Gaps</i>]
+    F --> G[SVG Visualization<br/><i>Radar & Intelligence Map</i>]
 ```
-INGESTION ➔ PARSING ➔ NORMALIZATION ➔ ENTITY EXTRACTION ➔ RELATIONSHIPS ➔ ANALYSIS ➔ VISUALIZATION
-```
 
-Performance timings for each stage are inspectable in real-time under **Settings → Pipeline log**.
+Stage execution benchmarks are visible in real-time under **Settings → Pipeline log**:
 
-| Stage | Responsible Engine | Key Deliverables |
+| Pipeline Stage | Engine / Service | Core Responsibilities |
 |---|---|---|
-| **Ingestion** | `DataIngestionService` | Multi-file uploads, clipboard paste, inline text notes, DEMO datasets |
-| **Parsing** | `XMLParser`, `JSONParser`, `CSVParser`, `TextExtraction` | Schema discovery, syntax validation, record extraction |
-| **Normalization** | `NormalizationService` | Deduplication, unified profile schema mapping, date alignment |
-| **Entity Extraction** | `EntityService`, `TextExtractionService` | Skill identification, role detection, contextual evidence extraction |
-| **Relationships** | `RelationshipService` | Skill-to-project graphs, experience-to-role associations |
-| **Evidence & Audit** | `EvidenceService` | Weighted citations (Projects: 3, Experience: 4, Certificates: 2) |
-| **Analytics** | `SkillAnalysis`, `CareerAnalysis`, `ProjectAnalysis`, `DataQuality` | Readiness scoring, gap identification, multi-source contradiction audits |
-| **Visualization** | `VisualizationService` + Directives | Handcrafted dynamic SVG components (`cs-radar`, `cs-intel-map`, `cs-network`) |
-| **Reporting** | `ReportService` | High-fidelity executive printable dossiers and downloadable summaries |
+| **1. Ingestion** | `DataIngestionService` | Multi-file uploads, clipboard paste, inline text notes, DEMO datasets |
+| **2. Parsing** | `XMLParser`, `JSONParser`, `CSVParser`, `TextExtraction` | Schema discovery, syntax validation, record extraction |
+| **3. Normalization** | `NormalizationService` | Deduplication, unified profile schema mapping, date alignment |
+| **4. Entity Extraction** | `EntityService`, `TextExtractionService` | Skill identification, role detection, contextual evidence extraction |
+| **5. Relationships** | `RelationshipService` | Skill-to-project graphs, experience-to-role associations |
+| **6. Analysis & Evidence** | `EvidenceService`, `SkillAnalysis`, `CareerAnalysis` | Weighted citations (Projects: 3, Experience: 4, Certificates: 2) |
+| **7. Visualization & Reports** | `VisualizationService` + Directives | Handcrafted SVG components (`cs-radar`, `cs-intel-map`, `cs-network`) |
 
 ---
 
@@ -87,7 +129,7 @@ Performance timings for each stage are inspectable in real-time under **Settings
 | **1. Overview** | Profile hero, career readiness ring, fast intelligence metrics, and central radial map. |
 | **2. Skill Intelligence** | Filterable skill matrix, competency levels, SVG radar chart, and target role gap table. |
 | **3. Career Map** | Chronological career journey, transition milestones, and relationship network. |
-| **4. Projects** | Project catalog, documentation strength ratings, skills utilized, and skill-link graphs. |
+| **4. Projects** | Project catalog, documentation strength ratings, skills demonstrated, and skill-link graphs. |
 | **5. Learning** | Gap-driven learning roadmap prioritized by target career aspirations. |
 | **6. Opportunities** | Match scoring against imported job descriptions (matched / partial / missing requirements). |
 | **7. Evidence** | Comprehensive provenance audit trail showing source documents and confidence levels. |
@@ -97,39 +139,39 @@ Performance timings for each stage are inspectable in real-time under **Settings
 
 ---
 
-## 📁 Supported Data Formats
+## 📁 Supported Ingestion Formats
 
-| Format | Supported Entities & Features |
+| Format | Parsing Capabilities |
 |---|---|
-| **XML** | Structured `<skill>`, `<project>`, `<certificate>`, `<education>`, `<experience>` nodes |
+| **XML** | Structured `<skill>`, `<project>`, `<certificate>`, `<education>`, and `<experience>` nodes |
 | **JSON** | Arrays or objects of profiles, skills, projects, employment history, target roles |
-| **CSV** | Tabular matrices with column auto-detection (`skill,category,level,years`) |
+| **CSV** | Tabular matrices with auto-detected columns (`skill,category,level,years`) |
 | **TXT / Resume** | Unstructured resume text processed via regex and keyword entity matching |
 | **Notes** | Freeform text entries stored as first-class verifiable sources |
 
 ---
 
-## 🌐 Deployment Options
+## 🌐 Deployment Configuration
 
-Configuration files are included for all major platforms:
+The repository includes ready-to-use configuration files for seamless deployment across major cloud platforms:
 
-- **GitHub Pages:** Pre-configured with [deploy.yml](.github/workflows/deploy.yml) and `.nojekyll`.
-- **Vercel:** Configured via [vercel.json](vercel.json).
-- **Netlify:** Configured via [netlify.toml](netlify.toml).
-- **Docker / Containers:** Configured via [Dockerfile](Dockerfile) and [.dockerignore](.dockerignore).
+* **GitHub Pages:** Automated via [.github/workflows/deploy.yml](.github/workflows/deploy.yml) and `.nojekyll`
+* **Vercel:** Optimized static routing in [vercel.json](vercel.json)
+* **Netlify:** Clean headers and publish root in [netlify.toml](netlify.toml)
+* **Docker:** Multi-stage lightweight Alpine container in [Dockerfile](Dockerfile)
 
 ---
 
-## 🔒 Privacy & Security
+## 🔒 Privacy & Local-First Security
 
-- **Zero Network Transmission:** All data remains strictly inside browser memory and `localStorage`.
-- **No Third-Party Scripts:** AngularJS and icons are vendored locally in `vendor/`.
-- **Transparent Evidence:** No hallucinated or fabricated job criteria; analytics strictly reflect imported datasets.
+* **Zero Network Requests at Runtime:** All processing happens in local browser memory.
+* **Local Persistence:** Data is stored exclusively in `localStorage` under your control.
+* **Honest Scoring:** No fabricated metrics or AI hallucinations; every analytical score is directly calculated from your supplied documentation.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE) — see the [LICENSE](LICENSE) file for details.
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for more information.
 
 Developed with ❤️ by **[Vijay Mahes](https://github.com/vijaymahes9080)**.
