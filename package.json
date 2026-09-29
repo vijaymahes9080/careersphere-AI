@@ -1,0 +1,22 @@
+{
+  "name": "careersphere-ai",
+  "version": "1.0.0",
+  "description": "CareerSphere AI — Career Intelligence & Personal Growth Platform",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "career",
+    "intelligence",
+    "analytics",
+    "skills",
+    "resume"
+  ],
+  "author": "Vijay Mahes",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
