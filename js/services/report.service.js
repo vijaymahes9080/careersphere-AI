@@ -91,7 +91,105 @@
         var analyses = data.analyses || {};
         var body = header(type + ' Report', profile);
 
-        if (type === 'profile') {
+        if (type === 'comprehensive' || type === 'summary') {
+          // 1. Executive Summary
+          body += '<h2>1. Executive Summary</h2>';
+          if (analyses.readiness) {
+            body += '<div class="card" style="background:#f4f8ff;border-color:#b8d1ff"><strong>Career Readiness: ' + analyses.readiness.value + '%</strong> <span class="badge">CareerSphere Analytical Estimate</span><br>' +
+              '<span class="muted">' + esc(analyses.readiness.note) + '</span></div>';
+          }
+          if (analyses.cards) {
+            body += '<div class="two">' + analyses.cards.filter(function (c) { return c.canCompute; }).map(function (c) {
+              return '<div class="card"><strong>' + esc(c.label) + ': ' + esc(c.value) + '</strong><br><span class="muted small">' + esc(c.detail) + '</span></div>';
+            }).join('') + '</div>';
+          }
+
+          // 2. Career Profile
+          body += '<h2>2. Career Profile</h2><div class="two"><div class="card">' +
+            '<p><strong>Name:</strong> ' + esc(profile.identity.name || '—') + '<br>' +
+            '<strong>Email:</strong> ' + esc(profile.identity.email || '—') + '<br>' +
+            '<strong>Location:</strong> ' + esc(profile.identity.location || '—') + '</p>' +
+            '<p class="muted">' + esc(profile.identity.summary || '') + '</p></div><div class="card">' +
+            '<p><strong>Education:</strong> ' + esc(profile.education.map(function (e) { return e.name + (e.institution ? ' — ' + e.institution : ''); }).join('; ') || '—') + '<br>' +
+            '<strong>Target Roles:</strong> ' + esc(profile.targetRoles.map(function (r) { return r.title; }).join(', ') || '—') + '<br>' +
+            '<strong>Career Goals:</strong> ' + esc(profile.careerGoals.join(' | ') || '—') + '</p></div></div>';
+
+          // 3. Skill Analysis
+          body += '<h2>3. Skill Analysis &amp; Strength Matrix</h2>' + skillsTable(analyses.skill);
+
+          // 4. Role Analysis & Matching
+          body += '<h2>4. Career Role Analysis &amp; Match Fit</h2>';
+          if (analyses.roleMatches && analyses.roleMatches.length) {
+            var rRows = analyses.roleMatches.map(function (r) {
+              var matchedLen = r.matchedSkills ? r.matchedSkills.length : 0;
+              var reqsLen = r.requirements ? r.requirements.length : 0;
+              var whyText = r.whyMatches && r.whyMatches.length ? r.whyMatches.join('; ') : 'No requirement data available';
+              return '<tr><td><strong>' + esc(r.title) + '</strong></td><td><span class="badge">' + r.coveragePercent + '% Match</span></td><td>' +
+                esc(r.fitTier) + '</td><td>' + matchedLen + ' / ' + reqsLen + '</td><td>' +
+                esc(whyText) + '</td></tr>';
+            }).join('');
+            body += '<table><thead><tr><th>Role</th><th>Match %</th><th>Fit Tier</th><th>Matched Skills</th><th>Analytical Rationale</th></tr></thead><tbody>' + rRows + '</tbody></table>';
+          } else {
+            body += '<p class="muted">No target roles configured.</p>';
+          }
+
+          // 5. Skill Gaps
+          body += '<h2>5. Skill Gap Analysis (Current vs Required)</h2>' + gapSection(analyses.coverage);
+
+          // 6. Project Evidence & Portfolio
+          body += '<h2>6. Project Evidence &amp; Employability Impact</h2>' + projectsTable(analyses.project);
+
+          // 7. Career Paths
+          body += '<h2>7. Career Pathways &amp; Trajectories</h2>';
+          if (analyses.paths && analyses.paths.paths && analyses.paths.paths.length) {
+            body += '<ul>' + analyses.paths.paths.map(function (p) {
+              return '<li><strong>' + esc(p.name) + ':</strong> ' + p.steps.map(function (s) { return esc(s.label) + ' (' + s.status + ')'; }).join(' → ') + '</li>';
+            }).join('') + '</ul>';
+          }
+
+          // 8. Learning Roadmap
+          body += '<h2>8. Learning Roadmap (NOW → NEXT → BUILD → APPLY → ADVANCE)</h2>';
+          if (analyses.stageRoadmap && analyses.stageRoadmap.length) {
+            analyses.stageRoadmap.forEach(function (st) {
+              if (st.topics.length) {
+                body += '<h3>Stage: ' + esc(st.label) + ' — ' + esc(st.title) + '</h3><ul>' +
+                  st.topics.map(function (t) { return '<li><strong>' + esc(t.title) + '</strong> (' + esc(t.status) + ' for ' + esc(t.role) + ')</li>'; }).join('') + '</ul>';
+              }
+            });
+          } else if (analyses.learningPlan && analyses.learningPlan.length) {
+            body += '<ul>' + analyses.learningPlan.map(function (t) {
+              return '<li>Week ' + t.week + ': <strong>' + esc(t.title) + '</strong> (' + esc(t.status) + ' for ' + esc(t.role) + ')</li>';
+            }).join('') + '</ul>';
+          } else {
+            body += '<p class="muted">No learning roadmap items needed — all requirements met.</p>';
+          }
+
+          // 9. Action Plan
+          body += '<h2>9. Action Plan — Your Next 3 Actions</h2>';
+          if (analyses.nextActions && analyses.nextActions.length) {
+            body += '<div class="two">' + analyses.nextActions.map(function (act) {
+              return '<div class="card"><strong>' + esc(act.num) + '. ' + esc(act.title) + '</strong><br><span class="badge">' + esc(act.tag) + '</span><p class="muted small">' + esc(act.detail) + '</p></div>';
+            }).join('') + '</div>';
+          }
+
+          // 10. Data Quality
+          body += '<h2>10. Data Quality &amp; Extraction Audit</h2>';
+          if (analyses.dataQualityMetrics) {
+            var dq = analyses.dataQualityMetrics;
+            body += '<div class="two"><div class="card"><p><strong>Records Analyzed:</strong> ' + dq.recordsAnalyzed + '<br>' +
+              '<strong>Sources Detected:</strong> ' + dq.sourcesDetected + '<br>' +
+              '<strong>Skills Extracted:</strong> ' + dq.skillsExtracted + '</p></div><div class="card"><p>' +
+              '<strong>Skills Mapped:</strong> ' + dq.skillsMapped + '<br>' +
+              '<strong>Unmapped Items:</strong> ' + dq.unmappedItems + '<br>' +
+              '<strong>Confidence Score:</strong> ' + dq.confidence + '% (' + esc(dq.status) + ')</p></div></div>';
+          }
+
+          // 11. Methodology
+          body += '<h2>11. Methodology &amp; Transparency Statement</h2>' +
+            '<p class="muted small">CareerSphere AI uses a deterministic pipeline: <strong>Data → Extraction → Normalization → Analysis → Intelligence → Visualization → Career Action</strong>. ' +
+            'Scores are labeled as CareerSphere analytical estimates. No external AI APIs, third-party data tracking, or cloud uploads are used. All processing occurs locally within the browser sandbox.</p>';
+
+        } else if (type === 'profile') {
           body += '<h2>Identity</h2><div class="two"><div class="card">' +
             '<p><strong>Name:</strong> ' + esc(profile.identity.name || '—') + '<br>' +
             '<strong>Email:</strong> ' + esc(profile.identity.email || '—') + '<br>' +
@@ -102,53 +200,13 @@
             '<p><strong>Career goals:</strong> ' + esc(profile.careerGoals.join(' | ') || '—') + '</p></div></div>';
           body += '<h2>Skills</h2>' + skillsTable(analyses.skill);
           body += '<h2>Projects</h2>' + projectsTable(analyses.project);
-          body += '<h2>Source documents</h2><ul>' +
-            (profile.sourceDocuments.length ? profile.sourceDocuments.map(function (d) {
-              return '<li>' + esc(d.name) + ' (' + esc(d.format) + ', ' + d.recordCount + ' records)</li>';
-            }).join('') : '<li class="muted">No sources imported</li>') + '</ul>';
         } else if (type === 'skills') {
           body += '<h2>Skill analysis</h2>' + skillsTable(analyses.skill);
           body += '<h2>Evidence</h2>' + evidenceSection(analyses.evidence);
-          if (analyses.readiness) {
-            body += '<h2>Career readiness — CareerSphere analytical estimate</h2><p><strong>' + analyses.readiness.value + '%</strong></p><table><thead><tr><th>Factor</th><th>Score</th><th>Max</th><th>Detail</th></tr></thead><tbody>' +
-              analyses.readiness.factors.map(function (f) {
-                return '<tr><td>' + esc(f.label) + (f.excluded ? ' <span class="muted">(excluded)</span>' : '') + '</td><td>' + f.score + '</td><td>' + f.max + '</td><td>' + esc(f.detail) + '</td></tr>';
-              }).join('') + '</tbody></table><p class="muted">' + esc(analyses.readiness.note) + '</p>';
-          }
         } else if (type === 'gaps') {
           body += '<h2>Skill gap analysis</h2>' + gapSection(analyses.coverage);
-          if (analyses.learningPlan && analyses.learningPlan.length) {
-            body += '<h2>Learning roadmap from gaps</h2><table><thead><tr><th>Week</th><th>Topic</th><th>Status</th><th>Role</th></tr></thead><tbody>' +
-              analyses.learningPlan.map(function (t) {
-                return '<tr><td>' + t.week + '</td><td>' + esc(t.title) + '</td><td>' + esc(t.status) + '</td><td>' + esc(t.role) + '</td></tr>';
-              }).join('') + '</tbody></table>';
-          }
         } else if (type === 'projects') {
           body += '<h2>Project portfolio</h2>' + projectsTable(analyses.project);
-          if (analyses.project && analyses.project.projects.length) {
-            body += '<h2>Improvement opportunities</h2><ul>' + analyses.project.projects.map(function (p) {
-              return '<li><strong>' + esc(p.name) + '</strong>: ' + esc(p.improvementOpportunities.join('; ') || 'No issues found') + '</li>';
-            }).join('') + '</ul>';
-          }
-        } else { // summary
-          body += '<h2>Career Intelligence Summary</h2>';
-          if (analyses.readiness) {
-            body += '<div class="card"><strong>Career readiness:</strong> ' + analyses.readiness.value + '% <span class="muted">(analytical estimate)</span></div>';
-          }
-          if (analyses.cards) {
-            body += '<div class="two">' + analyses.cards.filter(function (c) { return c.canCompute; }).map(function (c) {
-              return '<div class="card"><strong>' + esc(c.label) + '</strong><br>' + esc(c.value) + '<br><span class="muted">' + esc(c.detail) + '</span></div>';
-            }).join('') + '</div>';
-          }
-          body += '<h2>Skills</h2>' + skillsTable(analyses.skill);
-          body += '<h2>Gaps</h2>' + gapSection(analyses.coverage);
-          if (analyses.report) {
-            body += '<h2>What CareerSphere found</h2>';
-            analyses.report.sections.forEach(function (sec) {
-              body += '<h3>' + esc(sec.heading) + '</h3><ul>' + sec.items.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>';
-            });
-            body += '<p class="muted">' + esc(analyses.report.disclaimer) + '</p>';
-          }
         }
 
         body += '<p class="muted" style="margin-top:28px;border-top:1px solid #dde3ee;padding-top:8px">Generated locally by CareerSphere AI. Your data never left this device.</p>';

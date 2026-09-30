@@ -12,18 +12,18 @@
         var vm = this;
 
         vm.state = ProfileService.state;
-        vm.selected = 'summary';
+        vm.selected = 'comprehensive';
         vm.preview = '';
         // iframe srcdoc passes through $sce.getTrusted(HTML, …), which rejects
         // plain strings — expose a trusted view of the same locally generated HTML.
         vm.previewDoc = $sce.trustAsHtml('');
 
         vm.types = [
+          { id: 'comprehensive', label: 'Full Career Intelligence Report (11 Sections)', desc: 'Executive summary, profile, skills, roles, gaps, projects, paths, roadmap, actions, data quality, methodology' },
           { id: 'profile', label: 'Career Profile', desc: 'Identity, education, skills, projects, sources' },
           { id: 'skills', label: 'Skill Report', desc: 'Skill matrix, evidence and readiness factors' },
           { id: 'gaps', label: 'Skill Gap Report', desc: 'Coverage vs target role + learning roadmap' },
-          { id: 'projects', label: 'Project Portfolio', desc: 'Projects, skills demonstrated, improvements' },
-          { id: 'summary', label: 'Career Intelligence Summary', desc: 'Cards, readiness, gaps, analysis findings' }
+          { id: 'projects', label: 'Project Portfolio', desc: 'Projects, skills demonstrated, improvements' }
         ];
 
         function render() {

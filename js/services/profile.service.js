@@ -349,10 +349,18 @@
           };
           analyses.readiness = CareerAnalysisService.computeReadiness(profile, analyses);
           analyses.cards = CareerAnalysisService.buildCards(profile, analyses);
+          analyses.roleMatches = CareerAnalysisService.buildRoleMatches(profile, analyses);
+          analyses.nextActions = CareerAnalysisService.buildNextActions(profile, analyses, analyses.roleMatches);
+          analyses.fitMatrix = CareerAnalysisService.buildFitMatrix(profile, analyses, analyses.roleMatches);
+          analyses.projectMap = CareerAnalysisService.buildProjectSkillRoleMap(profile, analyses);
+          analyses.evidenceBreakdown = CareerAnalysisService.buildEvidenceBreakdown(profile, analyses);
+          analyses.stageRoadmap = CareerAnalysisService.buildStageRoadmap(profile, analyses);
+          analyses.dataQualityMetrics = CareerAnalysisService.buildDataQualityMetrics(profile, state.datasets, analyses);
           analyses.paths = CareerAnalysisService.buildCareerPaths(profile, analyses);
           analyses.journey = VisualizationService.careerJourney(profile, analyses);
           analyses.intelMap = VisualizationService.intelMap(profile, analyses);
           analyses.network = VisualizationService.skillNetwork(profile, analyses);
+          analyses.career360 = VisualizationService.career360Data(profile, analyses);
           if (state.report) {
             analyses.report = state.report;
           }

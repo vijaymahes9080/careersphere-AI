@@ -1,136 +1,295 @@
-<!-- CareerSphere AI — Overview -->
-<section class="page" aria-labelledby="overview-title">
+<!-- CareerSphere AI — Career Intelligence Command Center -->
+<section class="page overview-page" aria-labelledby="overview-title">
 
-  <!-- Profile header -->
-  <div class="hero panel">
-    <div class="hero-main">
-      <p class="eyebrow">Career Profile</p>
-      <h1 id="overview-title">{{ vm.profile().identity.name || 'Unnamed Profile' }}</h1>
-      <p class="hero-sub" ng-if="vm.profile().identity.summary">{{ vm.profile().identity.summary }}</p>
+  <!-- ═══ TOP HERO AREA ═══ -->
+  <header class="panel hero-command-center">
+    <div class="hero-header-top">
+      <div class="hero-brand-meta">
+        <span class="badge badge-accent">CAREER INTELLIGENCE SYSTEM</span>
+        <h1 id="overview-title">{{ vm.profile().identity.name || 'Your Career Profile' }}</h1>
+        <p class="hero-sub" ng-if="vm.profile().identity.summary">{{ vm.profile().identity.summary }}</p>
+        <p class="hero-sub muted" ng-if="!vm.profile().identity.summary && vm.hasData()">
+          Analytical assessment generated from your imported technical profile and portfolio evidence.
+        </p>
+      </div>
 
-      <div class="hero-facts">
-        <div class="fact" ng-if="vm.profile().education.length">
-          <span class="fact-k">Education</span>
-          <span class="fact-v">{{ vm.profile().education[0].name }}<span ng-if="vm.profile().education[0].institution"> — {{ vm.profile().education[0].institution }}</span></span>
+      <div class="hero-quick-facts" ng-if="vm.hasData()">
+        <div class="quick-fact" ng-if="vm.profile().education.length">
+          <span class="qf-k">Education</span>
+          <span class="qf-v">{{ vm.profile().education[0].name }}<span ng-if="vm.profile().education[0].institution"> · {{ vm.profile().education[0].institution }}</span></span>
         </div>
-        <div class="fact" ng-if="vm.primaryTargetRole()">
-          <span class="fact-k">Target role</span>
-          <span class="fact-v">{{ vm.primaryTargetRole() }}</span>
+        <div class="quick-fact" ng-if="vm.primaryTargetRole()">
+          <span class="qf-k">Primary Role</span>
+          <span class="qf-v">{{ vm.primaryTargetRole() }}</span>
         </div>
-        <div class="fact" ng-if="vm.profile().targetRoles.length || vm.profile().careerGoals.length">
-          <span class="fact-k">Direction</span>
-          <span class="fact-v">{{ vm.directionText() }}</span>
-        </div>
-        <div class="fact">
-          <span class="fact-k">Data</span>
-          <span class="fact-v">{{ vm.state.datasets.length }} dataset{{ vm.state.datasets.length === 1 ? '' : 's' }} · {{ vm.profile().skills.length }} skills · {{ vm.profile().projects.length }} projects</span>
+        <div class="quick-fact" ng-if="vm.directionText()">
+          <span class="qf-k">Direction</span>
+          <span class="qf-v">{{ vm.directionText() }}</span>
         </div>
       </div>
     </div>
 
-    <div class="hero-readiness" ng-if="vm.readiness()">
-      <cs-ring value="vm.readiness().value" label="Career Readiness" note="analytical estimate"></cs-ring>
-      <details class="factor-details">
-        <summary>View factors</summary>
-        <ul class="factor-list">
-          <li ng-repeat="f in vm.readiness().factors">
-            <strong>{{f.label}}</strong> — {{f.excluded ? 'excluded: ' : ''}}{{f.score}}/{{f.max}}
-            <span class="muted"> · {{f.detail}}</span>
-          </li>
-        </ul>
-        <p class="muted small">{{ vm.readiness().note }}</p>
-      </details>
+    <!-- ═══ KPI CARDS ROW ═══ -->
+    <div class="kpi-grid">
+      <div class="kpi-card" ng-repeat="k in vm.kpis()" ng-class="'kpi-' + k.tone">
+        <span class="kpi-label">{{k.label}}</span>
+        <div class="kpi-value" ng-class="{'kpi-empty': k.value === 'No data available'}">{{k.value}}</div>
+        <span class="kpi-sub muted small">{{k.sub}}</span>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <!-- Empty state -->
+  <!-- ═══ GLOBAL FILTER BAR ═══ -->
+  <nav class="panel global-filter-bar" aria-label="Global Dashboard Filters" ng-if="vm.hasData()">
+    <div class="filter-group">
+      <span class="filter-group-label">Career Area:</span>
+      <div class="filter-chips">
+        <button type="button" class="chip" ng-repeat="c in vm.categories()"
+                ng-class="{active: vm.filterCategory === c}" ng-click="vm.setCategory(c)">
+          {{c}}
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-group-label">Skill Level:</span>
+      <div class="filter-chips">
+        <button type="button" class="chip" ng-repeat="lvl in vm.levels"
+                ng-class="{active: vm.filterLevel === lvl}" ng-click="vm.setLevel(lvl)">
+          {{lvl}}
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-right" ng-if="vm.profile().targetRoles.length">
+      <label for="overview-role-select" class="sr-only">Active Target Role</label>
+      <select id="overview-role-select" class="input input-sm" ng-model="vm.state.settings.selectedRoleId"
+              ng-change="vm.setRole(vm.state.settings.selectedRoleId)">
+        <option value="">Target Role: All Roles</option>
+        <option ng-repeat="r in vm.profile().targetRoles"
+                ng-value="'role:' + r.title.toLowerCase().replace(/[^a-z0-9]/g, '_')">
+          Focus: {{r.title}}
+        </option>
+      </select>
+    </div>
+  </nav>
+
+  <!-- ═══ EMPTY STATE ═══ -->
   <div class="panel empty-state" ng-if="!vm.hasData()">
-    <h2>No data imported yet</h2>
-    <p>CareerSphere only shows what your data supports. Start by importing a resume, project list, skill matrix or target-role dataset.</p>
+    <div class="empty-icon">◉</div>
+    <h2>No Career Data Imported Yet</h2>
+    <p>CareerSphere AI operates 100% locally in your browser. All metrics and relationships are calculated directly from your real data.</p>
     <div class="empty-actions">
-      <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
-      <a class="btn btn-ghost" href="#/data-center">Load demo data</a>
+      <button type="button" class="btn btn-primary" ng-click="vm.loadDemoData()">Load Verified Demo Data</button>
+      <a class="btn btn-ghost" href="#/data-center">Import Resume / Projects / CSV</a>
     </div>
-    <p class="muted small">Demo datasets are labeled "DEMO DATA" and are never mixed with your own data.</p>
+    <p class="muted small">Demo datasets are explicitly tagged DEMO DATA and can be purged at any time.</p>
   </div>
 
-  <!-- Intelligence cards -->
-  <div class="cards-grid" ng-if="vm.hasData()">
-    <article class="panel card" ng-repeat="c in vm.cards()" ng-class="{'card-muted': !c.canCompute}">
-      <header class="card-head">
-        <h3>{{c.label}}</h3>
-        <span class="badge" ng-if="!c.canCompute">needs data</span>
-      </header>
-      <div class="card-value">{{c.value}}</div>
-      <p class="card-detail">{{c.detail}}</p>
-      <details ng-if="c.factors.length" class="factor-details">
-        <summary>Factors used</summary>
-        <ul class="factor-list">
-          <li ng-repeat="f in c.factors"><strong>{{f.label}}</strong><span ng-if="f.value"> — {{f.value}}</span><span ng-if="f.points !== undefined"> — {{f.points}}/{{f.max}} pts</span></li>
-        </ul>
-      </details>
-    </article>
-  </div>
+  <div ng-if="vm.hasData()">
 
-  <!-- Central career intelligence map + detail -->
-  <div class="split-2" ng-if="vm.hasData()">
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Career Intelligence Map</h2>
-        <span class="muted small">Center: you · click groups to expand</span>
-      </div>
-      <cs-intel-map data="vm.intelMap()" on-select="vm.onSelectNode(node)" selected-id="vm.selectedNode.id"></cs-intel-map>
-    </div>
-    <div class="panel detail-panel">
-      <div class="panel-head"><h2>Node details</h2></div>
-      <p class="muted" ng-if="!vm.selectedNode">Click any node in the map to see its description, evidence, sources, confidence and recommended next action.</p>
-      <cs-node-detail node="vm.selectedNode"></cs-node-detail>
-    </div>
-  </div>
-
-  <!-- Data quality + sources -->
-  <div class="split-2" ng-if="vm.hasData()">
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Data quality</h2>
-        <span class="badge badge-warn" ng-if="vm.quality().total">{{vm.quality().total}} warnings</span>
-        <span class="badge badge-err" ng-if="vm.quality().errors.length">{{vm.quality().errors.length}} errors</span>
-      </div>
-      <ul class="quality-list">
-        <li ng-repeat="w in vm.quality().warnings" class="q-item q-{{w.code | lowercase}}">
-          <span class="q-mark">!</span>
-          <span>{{w.message}}</span>
-        </li>
-        <li ng-repeat="e in vm.quality().errors" class="q-item q-error">
-          <span class="q-mark">✗</span>
-          <span>{{e.message}}</span>
-        </li>
-      </ul>
-      <p class="muted" ng-if="!vm.quality().warnings.length && !vm.quality().errors.length">No data quality issues detected.</p>
-    </div>
-
-    <div class="panel">
-      <div class="panel-head"><h2>Sources &amp; pipeline</h2></div>
-      <table class="table">
-        <thead><tr><th>Source</th><th>Format</th><th>Records</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr ng-repeat="ds in vm.state.datasets">
-            <td>{{ds.name}} <span class="badge badge-demo" ng-if="ds.isDemo">DEMO DATA</span></td>
-            <td>{{ds.format | uppercase}}</td>
-            <td>{{ds.recordCount}}</td>
-            <td><span class="status-pill" ng-class="ds.status">{{ds.status}}</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <p class="muted small" ng-if="!vm.state.datasets.length">No sources imported.</p>
-
-      <div class="pipeline-strip" ng-if="vm.state.pipelineLog.length">
-        <h4>Pipeline performance (last run)</h4>
-        <div class="pipeline-steps">
-          <span class="pipe-step" ng-repeat="s in vm.state.pipelineLog">{{s.step}} <strong>{{s.ms}}ms</strong></span>
+    <!-- ═══ "WHAT SHOULD I DO NEXT?" (TOP ACTION SECTION) ═══ -->
+    <section class="panel next-actions-section" aria-labelledby="next-actions-title">
+      <div class="section-head">
+        <div>
+          <span class="badge badge-accent">EXECUTIVE RECOMMENDATIONS</span>
+          <h2 id="next-actions-title">YOUR NEXT 3 ACTIONS</h2>
+          <p class="muted small">Derived automatically from identified skill gaps, evidence strength, and target role requirements.</p>
         </div>
       </div>
+      <div class="actions-grid">
+        <article class="action-card" ng-repeat="act in vm.nextActions()" ng-class="'act-' + act.tone">
+          <div class="action-num">{{act.num}}</div>
+          <div class="action-content">
+            <span class="badge badge-sm" ng-class="act.tone">{{act.tag}}</span>
+            <h3 class="action-title">{{act.title}}</h3>
+            <p class="action-detail">{{act.detail}}</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═══ CAREER 360° VIEW ═══ -->
+    <section class="panel c360-section" aria-labelledby="c360-title">
+      <div class="section-head">
+        <div>
+          <span class="badge badge-cyan">SYSTEMIC INTELLIGENCE</span>
+          <h2 id="c360-title">CAREER 360° VIEW</h2>
+          <p class="muted small">Interconnected view integrating your skills, projects, experience, education, target roles, gaps, learning, and verified evidence.</p>
+        </div>
+      </div>
+      <cs-career-360 data="vm.career360Data()"></cs-career-360>
+    </section>
+
+    <!-- ═══ SKILL RADAR & HORIZONTAL BAR CHART ═══ -->
+    <div class="split-2">
+      <section class="panel" aria-labelledby="radar-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="radar-title">1. Skill Radar</h2>
+            <span class="muted small">What does your skill profile look like? (Category Strength 0–100%)</span>
+          </div>
+        </div>
+        <cs-radar labels="vm.radarData().labels" values="vm.radarData().values" title="Category skill distribution radar"></cs-radar>
+      </section>
+
+      <section class="panel" aria-labelledby="bars-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="bars-title">2. Skill Strength Rankings</h2>
+            <span class="muted small">Sorted dynamically · strongest vs developing capabilities</span>
+          </div>
+        </div>
+        <cs-skill-bar-chart skills="vm.filteredSkills()"></cs-skill-bar-chart>
+      </section>
     </div>
+
+    <!-- ═══ CAREER ROLE MATCHING & CAREER FIT MATRIX ═══ -->
+    <div class="split-2">
+      <section class="panel" aria-labelledby="role-match-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="role-match-title">4. Career Role Matching</h2>
+            <span class="muted small">Requirement coverage across target roles with analytical reasoning</span>
+          </div>
+        </div>
+        <cs-role-matching roles="vm.roleMatches()" on-select-role="vm.setRole(role)"></cs-role-matching>
+      </section>
+
+      <section class="panel" aria-labelledby="fit-matrix-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="fit-matrix-title">5. Career Fit Matrix</h2>
+            <span class="muted small">Role readiness tiers · Click any role to inspect full dossier</span>
+          </div>
+        </div>
+        <cs-fit-matrix matrix="vm.fitMatrix()" on-select-role="vm.setRole(role)"></cs-fit-matrix>
+      </section>
+    </div>
+
+    <!-- ═══ SKILL GAP ANALYSIS ═══ -->
+    <section class="panel" aria-labelledby="gap-analysis-title">
+      <div class="panel-head">
+        <div>
+          <h2 id="gap-analysis-title">3. Skill Gap Analysis</h2>
+          <span class="muted small">CURRENT SKILLS → REQUIRED SKILLS → MISSING SKILLS → LEARNING ACTION</span>
+        </div>
+        <span class="badge" ng-if="vm.selectedRoleCoverage().role">Focus: {{vm.selectedRoleCoverage().role.title}}</span>
+      </div>
+      <cs-skill-gap-chart gaps="vm.gapsList()" role-title="{{vm.selectedRoleCoverage().role.title}}"></cs-skill-gap-chart>
+    </section>
+
+    <!-- ═══ PROJECT → SKILL → ROLE MAP ═══ -->
+    <section class="panel" aria-labelledby="pm-title">
+      <div class="panel-head">
+        <div>
+          <h2 id="pm-title">9. Project → Skill → Role Map</h2>
+          <span class="muted small">How specific project deliverables feed into skills and employability for target roles</span>
+        </div>
+      </div>
+      <cs-project-role-map map-data="vm.projectMap()"></cs-project-role-map>
+    </section>
+
+    <!-- ═══ CAREER PATHWAY GRAPH ═══ -->
+    <section class="panel" aria-labelledby="pathway-graph-title" ng-if="vm.pathwayTree()">
+      <div class="panel-head">
+        <div>
+          <h2 id="pathway-graph-title">6. Career Pathway Graph</h2>
+          <span class="muted small">Interactive branching career trajectories derived from your profile and role requirements</span>
+        </div>
+      </div>
+      <cs-pathway-graph data="vm.pathwayTree()"></cs-pathway-graph>
+    </section>
+
+    <!-- ═══ SKILL NETWORK GRAPH (TRIPARTITE) ═══ -->
+    <section class="panel" aria-labelledby="net-title" ng-if="vm.networkData()">
+      <div class="panel-head">
+        <div>
+          <h2 id="net-title">7. Skill Network Graph (Projects ↔ Skills ↔ Roles)</h2>
+          <span class="muted small">Interactive graph connecting projects that demonstrate skills and skills required by roles</span>
+        </div>
+      </div>
+      <cs-network data="vm.networkData()" on-select="vm.onSelectNode(node)"></cs-network>
+    </section>
+
+    <!-- ═══ LEARNING ROADMAP (NOW → NEXT → BUILD → APPLY → ADVANCE) ═══ -->
+    <section class="panel" aria-labelledby="roadmap-title">
+      <div class="panel-head">
+        <div>
+          <h2 id="roadmap-title">10. Learning Roadmap</h2>
+          <span class="muted small">Sequential progression: NOW → NEXT → BUILD → APPLY → ADVANCE</span>
+        </div>
+      </div>
+      <cs-learning-roadmap stages="vm.stageRoadmap()"></cs-learning-roadmap>
+    </section>
+
+    <!-- ═══ READINESS GAUGE & EVIDENCE STRENGTH BREAKDOWN ═══ -->
+    <div class="split-2">
+      <section class="panel" aria-labelledby="readiness-gauge-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="readiness-gauge-title">11. Readiness Gauge</h2>
+            <span class="muted small">Composite evaluation across 5 weighted dimensions</span>
+          </div>
+        </div>
+        <cs-readiness-gauge readiness="vm.analyses().readiness" has-data="vm.hasData()"></cs-readiness-gauge>
+      </section>
+
+      <section class="panel" aria-labelledby="evidence-strength-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="evidence-strength-title">12. Evidence Strength Breakdown</h2>
+            <span class="muted small">Transparent distribution of source citations backing analytical claims</span>
+          </div>
+        </div>
+        <cs-evidence-breakdown breakdown="vm.evidenceBreakdown()"></cs-evidence-breakdown>
+      </section>
+    </div>
+
+    <!-- ═══ DATA QUALITY PANEL & CAREER PROGRESS BASELINE ═══ -->
+    <div class="split-2">
+      <section class="panel" aria-labelledby="dq-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="dq-title">13. Data Quality &amp; Extraction Audit</h2>
+            <span class="muted small">Integrity check of records, sources, and mapping confidence</span>
+          </div>
+        </div>
+        <cs-data-quality-panel metrics="vm.dataQualityMetrics()"></cs-data-quality-panel>
+      </section>
+
+      <section class="panel" aria-labelledby="pt-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="pt-title">14. Career Progress Baseline</h2>
+            <span class="muted small">Real-time progression milestones without fabricated historical timelines</span>
+          </div>
+        </div>
+        <cs-progress-tracker analyses="vm.analyses()"></cs-progress-tracker>
+      </section>
+    </div>
+
+    <!-- ═══ CENTRAL CAREER INTELLIGENCE MAP + NODE DETAILS ═══ -->
+    <div class="split-2">
+      <section class="panel" aria-labelledby="intel-map-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="intel-map-title">8. Central Career Intelligence Map</h2>
+            <span class="muted small">Radial entity map: Click any group circle to expand its members</span>
+          </div>
+        </div>
+        <cs-intel-map data="vm.intelMap()" on-select="vm.onSelectNode(node)" selected-id="vm.selectedNode.id"></cs-intel-map>
+      </section>
+
+      <section class="panel detail-panel" aria-labelledby="node-details-title">
+        <div class="panel-head">
+          <h2 id="node-details-title">Node Dossier &amp; Evidence Audit</h2>
+        </div>
+        <p class="muted" ng-if="!vm.selectedNode">Click any node in the Intelligence Map or Network above to view its complete evidence chain, source origin, confidence level, and recommended career action.</p>
+        <cs-node-detail node="vm.selectedNode"></cs-node-detail>
+      </section>
+    </div>
+
   </div>
 
 </section>

@@ -11,7 +11,10 @@
   'use strict';
 
   angular.module('careerSphere.services')
-    .factory('CareerAnalysisService', [function () {
+    .factory('CareerAnalysisService', [
+      'SkillAnalysisService',
+      'CareerProfileModel',
+      function (SkillAnalysisService, CareerProfileModel) {
 
       // ── Intelligence cards ───────────────────────────────────────────
 
@@ -258,14 +261,356 @@
           }
         });
 
+        // Generate interactive graph tree from actual target roles and pathways
+        var pathwaysTree = buildPathwayTree(profile, analyses, paths);
+
         return {
           paths: paths,
+          tree: pathwaysTree,
           note: 'These are pathways derived from your current data — they are not predictions or career guarantees.'
         };
       }
 
-      // ── Learning roadmap from real gaps ─────────────────────────────
+      function buildPathwayTree(profile, analyses, paths) {
+        var roles = profile.targetRoles || [];
+        var skill = analyses.skill;
 
+        // Group into primary domains
+        var branches = [];
+
+        roles.forEach(function (role) {
+          var cov = SkillAnalysisService.computeCoverage(profile, skill, role);
+          var pct = cov ? cov.coveragePercent : 0;
+          var status = pct >= 75 ? 'strong' : (pct >= 50 ? 'progress' : 'target');
+
+          // Child specializations derived from requirements
+          var children = [];
+          if (role.title.toLowerCase().indexOf('ai') > -1) {
+            children.push({ name: 'ML Engineer', status: pct >= 65 ? 'progress' : 'future', match: Math.max(30, pct - 8) });
+            children.push({ name: 'Agentic AI Engineer', status: 'future', match: Math.max(20, pct - 25) });
+          } else if (role.title.toLowerCase().indexOf('iot') > -1) {
+            children.push({ name: 'Edge AI Engineer', status: pct >= 55 ? 'progress' : 'future', match: Math.max(30, pct - 15) });
+            children.push({ name: 'Embedded Systems Architect', status: 'future', match: Math.max(25, pct - 20) });
+          } else if (role.title.toLowerCase().indexOf('full stack') > -1 || role.title.toLowerCase().indexOf('developer') > -1) {
+            children.push({ name: 'Cloud Native Architect', status: 'future', match: Math.max(25, pct - 22) });
+          }
+
+          branches.push({
+            id: 'node_' + role.title.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+            title: role.title,
+            status: status,
+            matchPercent: pct,
+            matchedCount: cov ? cov.counts.STRONG + cov.counts.FOUND : 0,
+            totalReqs: cov ? cov.requirements.length : 0,
+            children: children
+          });
+        });
+
+        return {
+          root: {
+            title: profile.identity.name || 'Current Profile',
+            subtitle: 'Analytical Foundation (' + (skill ? skill.stats.total : 0) + ' skills)',
+            avgStrength: skill ? skill.stats.avgStrength : 0
+          },
+          branches: branches
+        };
+      }
+
+      // ── Extended Analytics: Role Matching, Actions, Matrix, Evidence & Map ──
+
+      function buildRoleMatches(profile, analyses) {
+        if (!profile.targetRoles || !profile.targetRoles.length) return [];
+        var skillAnalysis = analyses.skill;
+        var projects = (analyses.project && analyses.project.projects) || [];
+
+        return profile.targetRoles.map(function (role) {
+          var cov = SkillAnalysisService.computeCoverage(profile, skillAnalysis, role);
+          var coveragePercent = cov && cov.coveragePercent !== null ? cov.coveragePercent : 0;
+
+          // Find projects linking to this role
+          var relatedProjects = projects.filter(function (p) {
+            return (p.relatedRoles || []).some(function (r) {
+              return r.title.toLowerCase() === role.title.toLowerCase();
+            }) || (p.skillsDemonstrated || []).some(function (s) {
+              return (role.requirements || []).some(function (req) {
+                return req.skill.toLowerCase() === s.name.toLowerCase();
+              });
+            });
+          });
+
+          var projectScore = Math.min(100, relatedProjects.length * 35);
+          var roleReadiness = Math.round(coveragePercent * 0.65 + projectScore * 0.35);
+          var fitTier = coveragePercent >= 75 ? 'High' : (coveragePercent >= 50 ? 'Medium' : 'Low');
+
+          return {
+            id: 'role_' + role.title.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+            title: role.title,
+            source: role.source || 'imported role profile',
+            coveragePercent: coveragePercent,
+            roleReadiness: roleReadiness,
+            fitTier: fitTier,
+            requirements: cov ? cov.requirements : [],
+            matchedSkills: cov ? cov.matchedSkills : [],
+            missingSkills: cov ? cov.missingSkills : [],
+            counts: cov ? cov.counts : { STRONG: 0, FOUND: 0, PARTIAL: 0, UNVERIFIED: 0, MISSING: 0 },
+            whyMatches: cov ? cov.whyMatches : [],
+            relatedProjects: relatedProjects,
+            recommendedLearning: (cov && cov.missingSkills ? cov.missingSkills.slice(0, 3) : []),
+            recommendedProjects: relatedProjects.length ? relatedProjects : (projects.length ? [projects[0]] : [])
+          };
+        }).sort(function (a, b) { return b.coveragePercent - a.coveragePercent; });
+      }
+
+      function buildNextActions(profile, analyses, roleMatches) {
+        var actions = [];
+        var primaryRole = (roleMatches && roleMatches.length) ? roleMatches[0] : null;
+        var gaps = primaryRole && primaryRole.missingSkills ? primaryRole.missingSkills : [];
+        var projects = (analyses.project && analyses.project.projects) || [];
+
+        // Action 01: Top Skill Gap to Strengthen
+        if (gaps.length) {
+          var topGap = gaps[0];
+          actions.push({
+            num: '01',
+            tag: 'Skill Gap Priority',
+            title: 'Strengthen ' + topGap.skill,
+            detail: 'Current level: ' + topGap.currentLevel + ' · Target for ' + primaryRole.title + ' (' + topGap.requiredLevel + '). ' + topGap.suggestedAction + '.',
+            tone: 'accent'
+          });
+        } else if (analyses.skill && analyses.skill.skills.length) {
+          var lowest = analyses.skill.skills[analyses.skill.skills.length - 1];
+          actions.push({
+            num: '01',
+            tag: 'Skill Foundation',
+            title: 'Deepen evidence for ' + lowest.name,
+            detail: 'Currently at ' + lowest.strength + '% strength. Add verifiable implementation proof or benchmarks.',
+            tone: 'accent'
+          });
+        } else {
+          actions.push({
+            num: '01',
+            tag: 'Data Ingestion',
+            title: 'Import your technical skills',
+            detail: 'Import a CSV skill matrix or resume to activate automated gap and strength analytics.',
+            tone: 'muted'
+          });
+        }
+
+        // Action 02: High-Impact Project Action
+        if (projects.length) {
+          var projNeedsDocs = projects.filter(function (p) { return p.missingDocumentation && p.missingDocumentation.length; })[0];
+          if (projNeedsDocs) {
+            actions.push({
+              num: '02',
+              tag: 'Portfolio Evidence',
+              title: 'Document ' + projNeedsDocs.name,
+              detail: 'Resolve ' + projNeedsDocs.missingDocumentation[0] + ' to boost Project Strength and validated skills.',
+              tone: 'cyan'
+            });
+          } else {
+            actions.push({
+              num: '02',
+              tag: 'Project Expansion',
+              title: 'Build a production-style ' + (primaryRole ? primaryRole.title : 'Engineering') + ' project',
+              detail: 'Build and deploy an end-to-end project applying top required technologies to demonstrate industry readiness.',
+              tone: 'cyan'
+            });
+          }
+        } else {
+          actions.push({
+            num: '02',
+            tag: 'Project Portfolio',
+            title: 'Add your flagship projects',
+            detail: 'Import projects to connect your demonstrated skills with target career roles.',
+            tone: 'warn'
+          });
+        }
+
+        // Action 03: Career Alignment & Application Action
+        if (primaryRole && primaryRole.coveragePercent >= 60) {
+          actions.push({
+            num: '03',
+            tag: 'Role Alignment',
+            title: 'Target ' + primaryRole.title + ' roles',
+            detail: 'You have ' + primaryRole.coveragePercent + '% requirement alignment and ' + primaryRole.matchedSkills.length + ' matching skills. Prepare portfolio evidence highlighting confirmed strengths.',
+            tone: 'good'
+          });
+        } else if (primaryRole) {
+          actions.push({
+            num: '03',
+            tag: 'Roadmap Milestone',
+            title: 'Complete Stage 1 Roadmap topics',
+            detail: 'Address the identified gaps to reach 75%+ coverage for ' + primaryRole.title + '.',
+            tone: 'warn'
+          });
+        } else {
+          actions.push({
+            num: '03',
+            tag: 'Target Role',
+            title: 'Configure target career roles',
+            detail: 'Define your desired engineering role in Settings or Data Center to unlock career pathways.',
+            tone: 'muted'
+          });
+        }
+
+        return actions;
+      }
+
+      function buildProjectSkillRoleMap(profile, analyses) {
+        var projects = (analyses.project && analyses.project.projects) || [];
+        var roles = profile.targetRoles || [];
+
+        return projects.map(function (p) {
+          var demonstrated = p.skillsDemonstrated || [];
+          var matchedRoles = roles.filter(function (r) {
+            var reqs = (r.requirements || []).map(function (req) { return req.skill.toLowerCase(); });
+            return demonstrated.some(function (s) {
+              return reqs.indexOf(s.name.toLowerCase()) > -1;
+            });
+          }).map(function (r) {
+            var count = (r.requirements || []).filter(function (req) {
+              return demonstrated.some(function (s) {
+                return s.name.toLowerCase() === req.skill.toLowerCase();
+              });
+            }).length;
+            return { title: r.title, matchingSkillsCount: count };
+          });
+
+          var impactScore = Math.min(100, Math.round(demonstrated.length * 15 + matchedRoles.length * 20 + (p.complexity === 'High' ? 25 : p.complexity === 'Medium' ? 15 : 5)));
+
+          return {
+            name: p.name,
+            domain: p.domain || 'Software',
+            complexity: p.complexity,
+            year: p.year || 'Current',
+            description: p.description,
+            skillsUsed: demonstrated.map(function (s) {
+              return { name: s.name, level: s.level, strength: s.strength || 60 };
+            }),
+            technologies: p.technologies || [],
+            careerRoles: matchedRoles.length ? matchedRoles : (p.relatedRoles || []),
+            impactScore: impactScore,
+            employabilityNote: 'Provides concrete evidence for ' + demonstrated.length + ' skill(s) across ' + (matchedRoles.length || 'multiple') + ' target career path(s).'
+          };
+        });
+      }
+
+      function buildEvidenceBreakdown(profile, analyses) {
+        var evidenceList = (analyses.evidence && analyses.evidence.list) || [];
+        var totalPoints = 0;
+        var counts = { resume: 0, projects: 0, certificates: 0, experience: 0 };
+        var points = { resume: 0, projects: 0, certificates: 0, experience: 0 };
+
+        evidenceList.forEach(function (item) {
+          (item.entries || []).forEach(function (e) {
+            var t = (e.type || '').toLowerCase();
+            var w = e.weight || 1;
+            totalPoints += w;
+            if (t.indexOf('resume') > -1 || t.indexOf('text') > -1 || t.indexOf('self') > -1) {
+              counts.resume++;
+              points.resume += w;
+            } else if (t.indexOf('project') > -1) {
+              counts.projects++;
+              points.projects += w;
+            } else if (t.indexOf('certificate') > -1 || t.indexOf('cert') > -1) {
+              counts.certificates++;
+              points.certificates += w;
+            } else if (t.indexOf('experience') > -1 || t.indexOf('internship') > -1 || t.indexOf('job') > -1) {
+              counts.experience++;
+              points.experience += w;
+            } else {
+              counts.resume++;
+              points.resume += w;
+            }
+          });
+        });
+
+        // Ensure non-zero visual indicators if profile has elements
+        if (profile.education.length && !counts.resume) { counts.resume = 2; points.resume = 4; totalPoints += 4; }
+        if (profile.projects.length && !counts.projects) { counts.projects = profile.projects.length; points.projects = profile.projects.length * 3; totalPoints += points.projects; }
+        if (profile.certificates.length && !counts.certificates) { counts.certificates = profile.certificates.length; points.certificates = profile.certificates.length * 2; totalPoints += points.certificates; }
+        if ((profile.experience.length || profile.internships.length) && !counts.experience) { counts.experience = 1; points.experience = 3; totalPoints += 3; }
+
+        function calcPct(pt) {
+          return totalPoints > 0 ? Math.round((pt / totalPoints) * 100) : 0;
+        }
+
+        return {
+          totalPoints: totalPoints,
+          sources: [
+            { label: 'Resume & Documents', count: counts.resume, points: points.resume, percent: calcPct(points.resume) },
+            { label: 'Projects & Repos', count: counts.projects, points: points.projects, percent: calcPct(points.projects) },
+            { label: 'Certifications', count: counts.certificates, points: points.certificates, percent: calcPct(points.certificates) },
+            { label: 'Experience / Internships', count: counts.experience, points: points.experience, percent: calcPct(points.experience) }
+          ],
+          verifiedRatio: analyses.evidence && analyses.evidence.overall ? analyses.evidence.overall.score : 0
+        };
+      }
+
+      function buildFitMatrix(profile, analyses, roleMatches) {
+        var high = [], medium = [], low = [];
+        (roleMatches || []).forEach(function (r) {
+          if (r.fitTier === 'High') high.push(r);
+          else if (r.fitTier === 'Medium') medium.push(r);
+          else low.push(r);
+        });
+        return { high: high, medium: medium, low: low, all: roleMatches || [] };
+      }
+
+      function buildStageRoadmap(profile, analyses) {
+        var plan = analyses.learningPlan || [];
+        var stages = [
+          { id: 'NOW', label: 'NOW', title: 'Critical Gaps', desc: 'High-priority missing skills for immediate focus', topics: [] },
+          { id: 'NEXT', label: 'NEXT', title: 'Core Requirements', desc: 'Secondary requirements to reach foundational parity', topics: [] },
+          { id: 'BUILD', label: 'BUILD', title: 'Hands-on Projects', desc: 'Transform partial skills into demonstrable evidence', topics: [] },
+          { id: 'APPLY', label: 'APPLY', title: 'Practical Application', desc: 'Deploy, test, and benchmark with real datasets', topics: [] },
+          { id: 'ADVANCE', label: 'ADVANCE', title: 'Mastery & Growth', desc: 'Specialized capabilities for long-term career growth', topics: [] }
+        ];
+
+        plan.forEach(function (topic, idx) {
+          var stageIdx = Math.min(4, Math.floor(idx / Math.max(1, Math.ceil(plan.length / 5))));
+          stages[stageIdx].topics.push(topic);
+        });
+
+        return stages;
+      }
+
+      function buildDataQualityMetrics(profile, datasets, analyses) {
+        var totalRecords = (datasets || []).reduce(function (sum, d) { return sum + (d.recordCount || 0); }, 0);
+        var sourcesCount = (datasets || []).length;
+        var skillsCount = profile.skills.length;
+        var mappedSkills = profile.skills.filter(function (s) { return s.level || (s.evidence && s.evidence.length); }).length;
+        var unmappedSkills = skillsCount - mappedSkills;
+        var warningsCount = (analyses && analyses.quality && analyses.quality.warnings) ? analyses.quality.warnings.length : 0;
+        var confidence = Math.max(20, Math.min(100, Math.round(100 - warningsCount * 3 + (sourcesCount > 1 ? 8 : 0))));
+
+        return {
+          recordsAnalyzed: totalRecords || (skillsCount + profile.projects.length),
+          sourcesDetected: sourcesCount,
+          skillsExtracted: skillsCount,
+          skillsMapped: mappedSkills,
+          unmappedItems: unmappedSkills,
+          missingFields: warningsCount,
+          confidence: confidence,
+          status: confidence >= 80 ? 'High Confidence' : (confidence >= 60 ? 'Moderate Confidence' : 'Needs Verification')
+        };
+      }
+
+      return {
+        buildCards: buildCards,
+        computeReadiness: computeReadiness,
+        buildCareerPaths: buildCareerPaths,
+        buildLearningPlan: buildLearningPlan,
+        analyzeOpportunities: analyzeOpportunities,
+        buildReport: buildReport,
+        buildRoleMatches: buildRoleMatches,
+        buildNextActions: buildNextActions,
+        buildProjectSkillRoleMap: buildProjectSkillRoleMap,
+        buildEvidenceBreakdown: buildEvidenceBreakdown,
+        buildFitMatrix: buildFitMatrix,
+        buildStageRoadmap: buildStageRoadmap,
+        buildDataQualityMetrics: buildDataQualityMetrics
+      };
       function buildLearningPlan(profile, analyses) {
         var coverage = analyses.coverage;
         if (!coverage || !coverage.requirements || !coverage.requirements.length) {

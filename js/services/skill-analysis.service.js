@@ -215,8 +215,56 @@
             counts: counts,
             coveragePercent: coveragePercent,
             message: null,
-            source: role.source || 'unknown'
+            source: role.source || 'unknown',
+            matchedSkills: rows.filter(function (r) { return r.status === 'STRONG' || r.status === 'FOUND'; }),
+            missingSkills: rows.filter(function (r) { return r.status === 'MISSING' || r.status === 'PARTIAL' || r.status === 'UNVERIFIED'; }).map(function (r) {
+              var reqLevelVal = r.requiredLevel ? (CareerProfileModel.levelToValue(r.requiredLevel) * 25) : 70;
+              var curVal = r.current ? r.current.strength : 0;
+              var gapVal = Math.max(15, reqLevelVal - curVal);
+              var priority = r.status === 'MISSING' ? 'High' : (r.status === 'PARTIAL' ? 'Medium' : 'Low');
+              var action = r.status === 'MISSING'
+                ? 'Study fundamentals and build a demonstration project'
+                : (r.status === 'PARTIAL' ? 'Strengthen hands-on implementation & portfolio evidence' : 'Add verifiable project or certificate documentation');
+              return {
+                skill: r.skillName,
+                requiredLevel: r.requiredLevel || 'Competent',
+                currentLevel: r.current ? (r.current.level || 'Detected (' + r.current.strength + '%)') : 'None',
+                currentStrength: curVal,
+                requiredStrength: reqLevelVal,
+                gap: gapVal,
+                status: r.status,
+                priority: priority,
+                suggestedAction: action,
+                source: r.source
+              };
+            }),
+            whyMatches: buildWhyMatches(role, rows, coveragePercent)
           };
+        }
+
+        function buildWhyMatches(role, rows, coveragePercent) {
+          var strongOrFound = rows.filter(function (r) { return r.status === 'STRONG' || r.status === 'FOUND'; });
+          var missing = rows.filter(function (r) { return r.status === 'MISSING'; });
+          var partial = rows.filter(function (r) { return r.status === 'PARTIAL' || r.status === 'UNVERIFIED'; });
+
+          var reasons = [];
+          if (strongOrFound.length) {
+            reasons.push('Demonstrates ' + strongOrFound.length + ' of ' + rows.length + ' required skills (' + strongOrFound.slice(0, 4).map(function (s) { return s.skillName; }).join(', ') + (strongOrFound.length > 4 ? ', …' : '') + ')');
+          }
+          if (missing.length) {
+            reasons.push('Missing key requirement' + (missing.length > 1 ? 's: ' : ': ') + missing.map(function (m) { return m.skillName; }).join(', '));
+          }
+          if (partial.length) {
+            reasons.push('Needs stronger evidence for: ' + partial.map(function (p) { return p.skillName; }).join(', '));
+          }
+          return reasons;
+        }
+
+        function computeAllCoverages(profile, skillAnalysis) {
+          if (!profile || !profile.targetRoles || !profile.targetRoles.length) return [];
+          return profile.targetRoles.map(function (role) {
+            return computeCoverage(profile, skillAnalysis, role);
+          });
         }
 
         function findSkill(profile, name) {
@@ -245,6 +293,7 @@
         return {
           analyze: analyze,
           computeCoverage: computeCoverage,
+          computeAllCoverages: computeAllCoverages,
           gapsFromCoverage: gapsFromCoverage,
           STANDARD_CATEGORIES: STANDARD_CATEGORIES
         };

@@ -140,32 +140,201 @@
       }
 
       /**
-       * Skill ↔ Project network (bipartite columns).
+       * Skill Network: Projects ↔ Skills ↔ Roles (Tripartite interactive graph)
        */
       function skillNetwork(profile, analyses) {
-        var projectRows = analyses.project ? analyses.project.projects : [];
-        var skillRows = (analyses.skill ? analyses.skill.skills : []).filter(function (s) { return s.evidenceCount > 0 || s.strength > 40; });
+        var projectRows = (analyses.project ? analyses.project.projects : []).slice(0, 8);
+        var skillRows = (analyses.skill ? analyses.skill.skills : []).filter(function (s) {
+          return s.evidenceCount > 0 || s.strength > 40;
+        }).slice(0, 14);
+        var roleRows = (profile.targetRoles || []).slice(0, 6);
 
         var nodes = [];
         var links = [];
-        var skillX = 200, projectX = 700;
+        var projX = 140, skillX = 480, roleX = 820;
 
-        skillRows.slice(0, 25).forEach(function (s, i) {
-          nodes.push({ id: s.id, label: s.name, col: 'skill', x: skillX, y: 40 + i * (600 / Math.max(1, Math.min(skillRows.length, 25))), strength: s.strength, ref: s });
-        });
-        projectRows.slice(0, 15).forEach(function (p, i) {
-          nodes.push({ id: 'project:' + slug(p.name), label: p.name, col: 'project', x: projectX, y: 40 + i * (600 / Math.max(1, Math.min(projectRows.length, 15))), ref: p });
-        });
-
-        var nodeIds = {};
-        nodes.forEach(function (n) { nodeIds[n.id] = true; });
-        projectRows.forEach(function (p) {
-          (p.skillsDemonstrated || []).forEach(function (sd) {
-            if (nodeIds[sd.id]) links.push({ source: sd.id, target: 'project:' + slug(p.name) });
+        // Column 1: Projects
+        projectRows.forEach(function (p, i) {
+          var y = 60 + i * (520 / Math.max(1, projectRows.length - 1));
+          nodes.push({
+            id: 'proj:' + slug(p.name),
+            label: p.name,
+            col: 'project',
+            x: projX,
+            y: Math.round(y),
+            meta: (p.technologies || []).slice(0, 3).join(', '),
+            ref: p
           });
         });
 
-        return { nodes: nodes, links: links };
+        // Column 2: Skills
+        skillRows.forEach(function (s, i) {
+          var y = 40 + i * (560 / Math.max(1, skillRows.length - 1));
+          nodes.push({
+            id: s.id,
+            label: s.name,
+            col: 'skill',
+            x: skillX,
+            y: Math.round(y),
+            strength: s.strength,
+            category: s.category,
+            level: s.level,
+            ref: s
+          });
+        });
+
+        // Column 3: Roles
+        roleRows.forEach(function (r, i) {
+          var y = 80 + i * (480 / Math.max(1, roleRows.length - 1));
+          var cov = analyses.coverage && analyses.coverage.role && analyses.coverage.role.title === r.title ? analyses.coverage.coveragePercent : null;
+          nodes.push({
+            id: 'role:' + slug(r.title),
+            label: r.title,
+            col: 'role',
+            x: roleX,
+            y: Math.round(y),
+            meta: cov !== null ? ('Coverage ' + cov + '%') : (r.requirements ? (r.requirements.length + ' reqs') : ''),
+            ref: r
+          });
+        });
+
+        var nodeMap = {};
+        nodes.forEach(function (n) { nodeMap[n.id] = n; });
+
+        // Links: Project ↔ Skill
+        projectRows.forEach(function (p) {
+          var pId = 'proj:' + slug(p.name);
+          (p.skillsDemonstrated || []).forEach(function (sd) {
+            if (nodeMap[sd.id]) {
+              links.push({
+                source: pId,
+                target: sd.id,
+                type: 'proj-skill'
+              });
+            }
+          });
+        });
+
+        // Links: Skill ↔ Role
+        roleRows.forEach(function (r) {
+          var rId = 'role:' + slug(r.title);
+          (r.requirements || []).forEach(function (req) {
+            var skillName = (typeof req === 'string' ? req : req.skill).toLowerCase();
+            skillRows.forEach(function (s) {
+              if (s.name.toLowerCase() === skillName || s.name.toLowerCase().indexOf(skillName) > -1 || skillName.indexOf(s.name.toLowerCase()) > -1) {
+                links.push({
+                  source: s.id,
+                  target: rId,
+                  type: 'skill-role'
+                });
+              }
+            });
+          });
+        });
+
+        return { nodes: nodes, links: links, nodeMap: nodeMap };
+      }
+
+      /**
+       * Career 360° View Data (8 radial facets around Career Foundation)
+       */
+      function career360Data(profile, analyses) {
+        var skill = analyses.skill;
+        var coverage = analyses.coverage;
+        var project = analyses.project;
+        var evidence = analyses.evidence;
+        var readiness = analyses.readiness;
+        var roleMatches = analyses.roleMatches || [];
+
+        var topRole = roleMatches.length ? roleMatches[0] : null;
+        var gapsCount = (coverage && coverage.counts) ? (coverage.counts.MISSING + coverage.counts.PARTIAL + coverage.counts.UNVERIFIED) : 0;
+        var plan = analyses.learningPlan || [];
+        var planDone = plan.filter(function (t) { return t.done; }).length;
+
+        var facets = [
+          {
+            id: 'skills',
+            label: 'Current Skills',
+            icon: '◈',
+            metric: (skill && skill.stats.total) ? (skill.stats.total + ' Skills') : 'No skills',
+            sub: (skill ? skill.stats.avgStrength : 0) + '% Avg Strength',
+            status: (skill && skill.stats.avgStrength >= 65) ? 'good' : 'warn',
+            angle: 0
+          },
+          {
+            id: 'roles',
+            label: 'Career Roles',
+            icon: '◎',
+            metric: topRole ? topRole.title : (profile.targetRoles.length ? profile.targetRoles[0].title : 'No roles'),
+            sub: topRole ? (topRole.coveragePercent + '% Match') : 'Target role',
+            status: (topRole && topRole.coveragePercent >= 70) ? 'good' : 'info',
+            angle: 45
+          },
+          {
+            id: 'gaps',
+            label: 'Skill Gaps',
+            icon: '⚠',
+            metric: gapsCount + ' Gaps',
+            sub: (coverage ? coverage.counts.MISSING : 0) + ' Critical missing',
+            status: gapsCount > 0 ? 'warn' : 'good',
+            angle: 90
+          },
+          {
+            id: 'learning',
+            label: 'Learning Progress',
+            icon: '◐',
+            metric: plan.length ? (planDone + ' / ' + plan.length + ' Done') : 'No roadmap',
+            sub: plan.length ? (Math.round((planDone / plan.length) * 100) + '% Progress') : 'Setup targets',
+            status: planDone > 0 ? 'good' : 'info',
+            angle: 135
+          },
+          {
+            id: 'projects',
+            label: 'Project Evidence',
+            icon: '▣',
+            metric: (project ? project.stats.total : 0) + ' Projects',
+            sub: (project ? project.stats.strength : 0) + '% Strength',
+            status: (project && project.stats.strength >= 60) ? 'good' : 'warn',
+            angle: 180
+          },
+          {
+            id: 'experience',
+            label: 'Experience',
+            icon: '💼',
+            metric: (profile.experience.length + profile.internships.length) + ' Records',
+            sub: profile.internships.length ? (profile.internships[0].role || 'Internship') : 'Practical exp',
+            status: (profile.experience.length + profile.internships.length) ? 'good' : 'muted',
+            angle: 225
+          },
+          {
+            id: 'education',
+            label: 'Education',
+            icon: '🎓',
+            metric: profile.education.length ? profile.education[0].name : 'Not provided',
+            sub: profile.education.length ? (profile.education[0].institution || 'Academic') : 'Formal degree',
+            status: profile.education.length ? 'good' : 'muted',
+            angle: 270
+          },
+          {
+            id: 'evidence',
+            label: 'Evidence Strength',
+            icon: '✓',
+            metric: (evidence && evidence.overall) ? (evidence.overall.score + '% Strength') : '0%',
+            sub: (skill ? skill.stats.withEvidence : 0) + ' Verified skills',
+            status: (evidence && evidence.overall && evidence.overall.score >= 50) ? 'good' : 'warn',
+            angle: 315
+          }
+        ];
+
+        return {
+          center: {
+            title: profile.identity.name || 'You',
+            readiness: readiness ? readiness.value : 0,
+            label: 'Career Readiness',
+            note: 'Analytical Estimate'
+          },
+          facets: facets
+        };
       }
 
       /**
@@ -221,7 +390,8 @@
       return {
         intelMap: intelMap,
         skillNetwork: skillNetwork,
-        careerJourney: careerJourney
+        careerJourney: careerJourney,
+        career360Data: career360Data
       };
     }]);
 
