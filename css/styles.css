@@ -3439,25 +3439,6 @@ body.theme-light .dab-btn {
   padding-left: 2px;
 }
 
-.dab-role {
-  font-weight: 700;
-  font-size: 12px;
-  color: var(--accent);
-}
-
-.dab-btn-admin .dab-role {
-  color: var(--accent-2);
-}
-
-.dab-sub {
-  font-size: 10px;
-  color: var(--text-3);
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 /* ── Header User Profile Badge ───────────────────────────── */
 .user-header-chip {
   display: flex;
