@@ -1,0 +1,210 @@
+<!-- CareerSphere AI — Admin Holistic Dashboard -->
+<section class="page admin-page" aria-labelledby="admin-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Platform Administration</p>
+      <h1 id="admin-title">Holistic Platform Intelligence</h1>
+      <p class="muted">Aggregated telemetry, user population distribution, and systemic skill intelligence.</p>
+    </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-ghost" ng-click="vm.refresh()" title="Recalculate platform analytics">
+        ↻ Refresh
+      </button>
+      <button type="button" class="btn btn-ghost" ng-click="vm.exportData('json')" title="Export full analytics as JSON">
+        ⬇ Export JSON
+      </button>
+      <button type="button" class="btn btn-ghost" ng-click="vm.exportData('csv')" title="Export user table as CSV">
+        ⬇ Export CSV
+      </button>
+      <a href="#/admin-users" class="btn btn-primary">
+        Manage Users →
+      </a>
+    </div>
+  </div>
+
+  <!-- Admin Subnavigation Bar -->
+  <nav class="panel admin-subnav" aria-label="Admin Navigation">
+    <a href="#/admin" class="active">Overview &amp; Analytics</a>
+    <a href="#/admin-users">User Management ({{vm.analytics.totalUsers}})</a>
+    <a href="#/admin-activity">Audit Activity Log</a>
+    <a href="#/settings">Platform Settings</a>
+  </nav>
+
+  <!-- ═══ PLATFORM OVERVIEW KPI CARDS ═══ -->
+  <div class="kpi-grid">
+    <div class="kpi-card kpi-accent">
+      <span class="kpi-label">TOTAL REGISTERED USERS</span>
+      <div class="kpi-value">{{vm.analytics.totalUsers}}</div>
+      <span class="kpi-sub muted small">{{vm.analytics.activeUsers}} Active · {{vm.analytics.disabledUsers}} Disabled</span>
+    </div>
+
+    <div class="kpi-card kpi-good">
+      <span class="kpi-label">TOTAL PLATFORM SKILLS</span>
+      <div class="kpi-value">{{vm.analytics.totalSkills}}</div>
+      <span class="kpi-sub muted small">{{vm.analytics.uniqueSkills}} Unique Technologies</span>
+    </div>
+
+    <div class="kpi-card kpi-cyan">
+      <span class="kpi-label">TOTAL PROJECTS LOGGED</span>
+      <div class="kpi-value">{{vm.analytics.totalProjects}}</div>
+      <span class="kpi-sub muted small">Across user portfolios &amp; dossiers</span>
+    </div>
+
+    <div class="kpi-card kpi-warn">
+      <span class="kpi-label">ACTIVE CAREER GOALS</span>
+      <div class="kpi-value">{{vm.analytics.totalGoals}}</div>
+      <span class="kpi-sub muted small">{{vm.analytics.completedLearningActivities}} Learning Steps Completed</span>
+    </div>
+  </div>
+
+  <div class="split-2">
+    <!-- ═══ TOP PLATFORM SKILLS ═══ -->
+    <section class="panel" aria-labelledby="top-skills-title">
+      <div class="panel-head">
+        <div>
+          <h2 id="top-skills-title">Most Common Platform Skills</h2>
+          <span class="muted small">Skills most frequently logged across all user profiles</span>
+        </div>
+      </div>
+
+      <div class="cat-bars" ng-if="vm.analytics.topSkills.length">
+        <div class="cat-bar-item" ng-repeat="s in vm.analytics.topSkills">
+          <div class="cat-bar-header">
+            <strong>{{s.name}}</strong>
+            <span class="muted small">{{s.count}} user<span ng-if="s.count > 1">s</span></span>
+          </div>
+          <div class="bar">
+            <div class="bar-fill" ng-style="{width: (s.count / vm.analytics.totalUsers * 100) + '%'}"></div>
+          </div>
+        </div>
+      </div>
+      <p class="muted" ng-if="!vm.analytics.topSkills.length">No skills recorded across users yet.</p>
+    </section>
+
+    <!-- ═══ SKILL CATEGORY DISTRIBUTION ═══ -->
+    <section class="panel" aria-labelledby="cat-dist-title">
+      <div class="panel-head">
+        <div>
+          <h2 id="cat-dist-title">Skill Category Distribution</h2>
+          <span class="muted small">Domain breadth across user populations</span>
+        </div>
+      </div>
+
+      <div class="cat-bars" ng-if="vm.analytics.categories.length">
+        <div class="cat-bar-item" ng-repeat="c in vm.analytics.categories">
+          <div class="cat-bar-header">
+            <strong>{{c.name}}</strong>
+            <span class="muted small">{{c.count}} occurrences</span>
+          </div>
+          <div class="bar">
+            <div class="bar-fill" ng-style="{width: (c.count / vm.analytics.totalSkills * 100) + '%'}"></div>
+          </div>
+        </div>
+      </div>
+      <p class="muted" ng-if="!vm.analytics.categories.length">No skill categories available.</p>
+    </section>
+  </div>
+
+  <div class="split-2">
+    <!-- ═══ TARGET CAREER ROLES POPULARITY ═══ -->
+    <section class="panel" aria-labelledby="target-roles-title">
+      <div class="panel-head">
+        <div>
+          <h2 id="target-roles-title">Target Career Roles</h2>
+          <span class="muted small">Primary vocational ambitions across users</span>
+        </div>
+      </div>
+
+      <div class="pill-list" ng-if="vm.analytics.targetRoles.length">
+        <div class="pill-item" ng-repeat="r in vm.analytics.targetRoles">
+          <span class="pill-title">{{r.title}}</span>
+          <span class="pill-count">{{r.count}} user<span ng-if="r.count > 1">s</span></span>
+        </div>
+      </div>
+      <p class="muted" ng-if="!vm.analytics.targetRoles.length">No target roles specified yet.</p>
+    </section>
+
+    <!-- ═══ EMERGING TECH & TRENDS ═══ -->
+    <section class="panel" aria-labelledby="emerging-title">
+      <div class="panel-head">
+        <div>
+          <h2 id="emerging-title">Emerging Technologies &amp; Demand</h2>
+          <span class="muted small">Fast-growing capabilities identified in goals and projects</span>
+        </div>
+      </div>
+
+      <div class="pill-list">
+        <div class="pill-item" ng-repeat="em in vm.analytics.emergingSkills">
+          <span class="pill-title">{{em.name}}</span>
+          <span class="badge badge-accent">{{em.trend}}</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ═══ ARCHITECTURE & SECURITY NOTICE ═══ -->
+  <div class="panel panel-wide security-status-panel">
+    <div class="panel-head">
+      <div>
+        <h2>System Status &amp; Multi-User Architecture</h2>
+        <span class="muted small">Data isolation &amp; security runtime inspection</span>
+      </div>
+      <span class="badge badge-good">PROTECTED MULTI-USER MODE</span>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-box">
+        <span class="sb-label">Data Isolation</span>
+        <span class="sb-val">Enforced</span>
+        <p class="muted small">Each user's profile, skills, projects, and goals are strictly partitioned under unique User ID namespaces.</p>
+      </div>
+
+      <div class="status-box">
+        <span class="sb-label">Authentication Layer</span>
+        <span class="sb-val">SHA-256 Salted</span>
+        <p class="muted small">Passwords are never stored in plaintext. Cryptographic digests ensure non-reversible authentication tokens.</p>
+      </div>
+
+      <div class="status-box">
+        <span class="sb-label">Role Guarding</span>
+        <span class="sb-val">Active</span>
+        <p class="muted small">Client and route guards prohibit normal users from querying or rendering administrative views.</p>
+      </div>
+
+      <div class="status-box">
+        <span class="sb-label">Deployment Architecture</span>
+        <span class="sb-val">Local-First Prototype</span>
+        <p class="muted small">Operating in zero-dependency client-side local storage mode. Ready for plug-and-play backend connection.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ RECENT AUDIT ACTIVITY SNIPPET ═══ -->
+  <section class="panel" aria-labelledby="recent-act-title">
+    <div class="panel-head">
+      <div>
+        <h2 id="recent-act-title">Recent Platform Events</h2>
+        <span class="muted small">Latest system and user operations</span>
+      </div>
+      <a href="#/admin-activity" class="btn btn-ghost btn-sm">View Full Audit Log →</a>
+    </div>
+
+    <div class="activity-timeline">
+      <div class="activity-item" ng-repeat="act in vm.analytics.recentActivities">
+        <div class="act-dot" ng-class="{'act-dot-system': act.userRole === 'system'}"></div>
+        <div class="act-content">
+          <div class="act-header">
+            <strong>{{act.action}}</strong>
+            <span class="muted small">{{act.timestamp | date:'short'}}</span>
+          </div>
+          <p class="act-desc">{{act.details}}</p>
+          <span class="badge badge-sm" ng-class="{'badge-accent': act.userRole === 'admin', 'badge-demo': act.userRole === 'system'}">
+            {{act.userName}} ({{act.userRole}})
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</section>

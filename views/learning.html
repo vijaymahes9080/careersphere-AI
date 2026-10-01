@@ -3,19 +3,59 @@
 
   <div class="page-head">
     <div>
-      <p class="eyebrow">Roadmap</p>
-      <h1 id="learn-title">Learning Intelligence</h1>
-      <p class="muted">Current skills → gaps → learning topics → projects → evidence → improved profile.</p>
+      <p class="eyebrow">Roadmap &amp; Ambition</p>
+      <h1 id="learn-title">Learning &amp; Career Goals</h1>
+      <p class="muted">Track personal vocational goals, milestone progress, and skill gap remediation.</p>
+    </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-primary" ng-click="appCtrl.openAddGoal()">+ Add Career Goal</button>
     </div>
   </div>
 
-  <div ng-if="!vm.state.datasets.length" class="panel empty-state">
-    <h2>No data imported</h2>
-    <p>A learning roadmap is generated from real skill gaps — import your profile and a target-role dataset first.</p>
+  <!-- ═══ USER'S ACTIVE CAREER GOALS ═══ -->
+  <section class="panel career-goals-panel" aria-labelledby="goals-sec-title">
+    <div class="panel-head">
+      <div>
+        <h2 id="goals-sec-title">My Personal Career Goals</h2>
+        <span class="muted small">{{vm.goals().length}} active goal<span ng-if="vm.goals().length !== 1">s</span></span>
+      </div>
+      <button type="button" class="btn btn-sm btn-ghost" ng-click="appCtrl.openAddGoal()">+ New Goal</button>
+    </div>
+
+    <div class="goals-grid" ng-if="vm.goals().length">
+      <div class="goal-card" ng-repeat="g in vm.goals() track by g.id">
+        <div class="goal-header">
+          <strong>{{g.title}}</strong>
+          <span class="badge" ng-class="{'badge-good': g.progress >= 100, 'badge-accent': g.progress < 100}">
+            {{g.progress}}%
+          </span>
+        </div>
+        <p class="goal-meta small muted">Target Role: <strong>{{g.targetRole}}</strong> <span ng-if="g.deadline">· Due {{g.deadline}}</span></p>
+        <div class="bar">
+          <div class="bar-fill" ng-style="{width: g.progress + '%'}"></div>
+        </div>
+        <div class="goal-footer">
+          <label class="small muted">
+            Progress:
+            <input type="range" min="0" max="100" step="5" ng-model="g.progress" ng-change="vm.updateGoalProgress(g.id, g.progress)" class="slider-sm">
+          </label>
+          <button type="button" class="btn-text small text-danger" ng-click="vm.deleteGoal(g.id)" title="Remove goal">✕ Delete</button>
+        </div>
+      </div>
+    </div>
+    <div class="empty-inline" ng-if="!vm.goals().length">
+      <p class="muted">No career goals created yet. Set targeted goals to focus your learning roadmap.</p>
+      <button type="button" class="btn btn-sm btn-primary" ng-click="appCtrl.openAddGoal()">+ Add Your First Goal</button>
+    </div>
+  </section>
+
+  <div ng-if="!vm.state.datasets.length && !vm.state.customSkills.length" class="panel empty-state">
+    <h2>No data imported for learning roadmap</h2>
+    <p>A learning roadmap is generated from real skill gaps — add skills or import a profile dataset.</p>
     <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
   </div>
 
-  <div ng-if="vm.state.datasets.length">
+  <div ng-if="vm.state.datasets.length || vm.state.customSkills.length">
     <!-- Flow strip -->
     <div class="flow-strip panel">
       <div class="flow-node"><span class="flow-k">Current skills</span><span class="flow-v">{{vm.currentSkills().length}} strong</span></div>

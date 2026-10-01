@@ -1,0 +1,215 @@
+<!-- CareerSphere AI — Admin User Management -->
+<section class="page admin-users-page" aria-labelledby="users-mgmt-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Platform Administration</p>
+      <h1 id="users-mgmt-title">User Management</h1>
+      <p class="muted">Inspect individual user career dossiers, verify skills &amp; projects, and manage accounts.</p>
+    </div>
+    <div class="page-actions">
+      <a href="#/admin" class="btn btn-ghost">← Admin Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Admin Subnavigation Bar -->
+  <nav class="panel admin-subnav" aria-label="Admin Navigation">
+    <a href="#/admin">Overview &amp; Analytics</a>
+    <a href="#/admin-users" class="active">User Management</a>
+    <a href="#/admin-activity">Audit Activity Log</a>
+    <a href="#/settings">Platform Settings</a>
+  </nav>
+
+  <!-- Filter & Search Toolbar -->
+  <div class="panel filter-bar" role="toolbar" aria-label="User table controls">
+    <div class="filter-left">
+      <div class="chip-row">
+        <button type="button" class="chip" ng-class="{active: vm.filterRole === 'all'}" ng-click="vm.filterRole = 'all'">All Roles</button>
+        <button type="button" class="chip" ng-class="{active: vm.filterRole === 'user'}" ng-click="vm.filterRole = 'user'">Users</button>
+        <button type="button" class="chip" ng-class="{active: vm.filterRole === 'admin'}" ng-click="vm.filterRole = 'admin'">Admins</button>
+      </div>
+
+      <div class="chip-row">
+        <button type="button" class="chip" ng-class="{active: vm.filterStatus === 'all'}" ng-click="vm.filterStatus = 'all'">All Status</button>
+        <button type="button" class="chip" ng-class="{active: vm.filterStatus === 'active'}" ng-click="vm.filterStatus = 'active'">Active</button>
+        <button type="button" class="chip" ng-class="{active: vm.filterStatus === 'disabled'}" ng-click="vm.filterStatus = 'disabled'">Disabled</button>
+      </div>
+    </div>
+
+    <div class="filter-right">
+      <input type="search" class="input" placeholder="Search by name, email, target role…" ng-model="vm.search" aria-label="Search users">
+      <select class="input" ng-model="vm.sortBy">
+        <option value="name">Sort: Name</option>
+        <option value="joined">Sort: Joined Date</option>
+        <option value="skills">Sort: Skills Count</option>
+        <option value="projects">Sort: Projects Count</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Registered Accounts</h2>
+      <span class="muted small">{{vm.users().length}} users displayed</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table table-admin-users">
+        <thead>
+          <tr>
+            <th ng-click="vm.setSort('name')" class="sortable">User <span ng-if="vm.sortBy === 'name'">{{vm.sortAsc ? '▲' : '▼'}}</span></th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Target Role</th>
+            <th ng-click="vm.setSort('skills')" class="sortable text-center">Skills <span ng-if="vm.sortBy === 'skills'">{{vm.sortAsc ? '▲' : '▼'}}</span></th>
+            <th ng-click="vm.setSort('projects')" class="sortable text-center">Projects <span ng-if="vm.sortBy === 'projects'">{{vm.sortAsc ? '▲' : '▼'}}</span></th>
+            <th class="text-center">Goals</th>
+            <th ng-click="vm.setSort('joined')" class="sortable">Joined <span ng-if="vm.sortBy === 'joined'">{{vm.sortAsc ? '▲' : '▼'}}</span></th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="u in vm.users() track by u.id" ng-class="{'row-disabled': u.status === 'disabled'}">
+            <td>
+              <strong>{{u.name}}</strong>
+              <div class="small muted" ng-if="u.education">{{u.education}}</div>
+            </td>
+            <td><code>{{u.email}}</code></td>
+            <td>
+              <span class="badge" ng-class="{'badge-accent': u.role === 'admin'}">{{u.role | uppercase}}</span>
+            </td>
+            <td><span class="cat-tag">{{u.targetRole}}</span></td>
+            <td class="text-center"><strong>{{u.skillsCount}}</strong></td>
+            <td class="text-center"><strong>{{u.projectsCount}}</strong></td>
+            <td class="text-center"><strong>{{u.goalsCount}}</strong></td>
+            <td class="small muted">{{u.createdAt | date:'mediumDate'}}</td>
+            <td>
+              <span class="badge" ng-class="{'badge-good': u.status === 'active', 'badge-err': u.status === 'disabled'}">
+                {{u.status | uppercase}}
+              </span>
+            </td>
+            <td class="row-actions">
+              <button type="button" class="btn btn-mini btn-primary" ng-click="vm.viewDossier(u)" title="View complete career dossier">
+                View Dossier
+              </button>
+              <button type="button" class="btn btn-mini" ng-class="{'btn-warn': u.status === 'active', 'btn-good': u.status === 'disabled'}"
+                      ng-click="vm.toggleStatus(u)" ng-if="u.role !== 'admin'"
+                      title="Toggle account active/disabled state">
+                {{u.status === 'active' ? 'Disable' : 'Enable'}}
+              </button>
+              <button type="button" class="btn btn-mini btn-danger" ng-click="vm.deleteUser(u)" ng-if="u.role !== 'admin'"
+                      title="Delete account and all isolated data">
+                ✕
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" ng-if="!vm.users().length">No users matched your query or filter criteria.</p>
+  </div>
+
+  <!-- ═══ USER DOSSIER MODAL ═══ -->
+  <div class="modal-backdrop" ng-if="vm.selectedDossier" ng-click="vm.closeDossier()">
+    <div class="modal dossier-modal" role="dialog" aria-modal="true" aria-labelledby="dossier-user-name" ng-click="$event.stopPropagation()">
+      <header class="modal-head">
+        <div>
+          <span class="badge badge-accent">{{vm.selectedDossier.user.role | uppercase}} DOSSIER</span>
+          <h3 id="dossier-user-name" class="modal-title">{{vm.selectedDossier.user.name}}</h3>
+          <p class="muted small">{{vm.selectedDossier.user.email}} · Joined {{vm.selectedDossier.user.createdAt | date:'medium'}} · Status: {{vm.selectedDossier.user.status}}</p>
+        </div>
+        <button type="button" class="nd-close" ng-click="vm.closeDossier()" aria-label="Close dossier">×</button>
+      </header>
+
+      <!-- Dossier Tabs -->
+      <div class="modal-tabs">
+        <button type="button" class="tab-btn" ng-class="{active: vm.dossierTab === 'profile'}" ng-click="vm.dossierTab = 'profile'">Profile</button>
+        <button type="button" class="tab-btn" ng-class="{active: vm.dossierTab === 'skills'}" ng-click="vm.dossierTab = 'skills'">Skills ({{vm.selectedDossier.skills.length}})</button>
+        <button type="button" class="tab-btn" ng-class="{active: vm.dossierTab === 'projects'}" ng-click="vm.dossierTab = 'projects'">Projects ({{vm.selectedDossier.projects.length}})</button>
+        <button type="button" class="tab-btn" ng-class="{active: vm.dossierTab === 'goals'}" ng-click="vm.dossierTab = 'goals'">Goals ({{vm.selectedDossier.goals.length}})</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 1. Profile Tab -->
+        <div ng-if="vm.dossierTab === 'profile'">
+          <div class="form-row">
+            <span class="form-label">Summary / Bio</span>
+            <p class="well">{{vm.selectedDossier.profile.identity.summary || 'No summary provided.'}}</p>
+          </div>
+          <div class="split-2">
+            <div>
+              <span class="form-label">Education</span>
+              <ul class="pc-list" ng-if="vm.selectedDossier.profile.education.length">
+                <li ng-repeat="e in vm.selectedDossier.profile.education">{{e.name}} <span class="muted" ng-if="e.institution">({{e.institution}})</span></li>
+              </ul>
+              <p class="muted small" ng-if="!vm.selectedDossier.profile.education.length">No education listed.</p>
+            </div>
+            <div>
+              <span class="form-label">Target Roles</span>
+              <ul class="pc-list" ng-if="vm.selectedDossier.profile.targetRoles.length">
+                <li ng-repeat="r in vm.selectedDossier.profile.targetRoles">{{r.title}}</li>
+              </ul>
+              <p class="muted small" ng-if="!vm.selectedDossier.profile.targetRoles.length">No target roles listed.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Skills Tab -->
+        <div ng-if="vm.dossierTab === 'skills'">
+          <table class="table" ng-if="vm.selectedDossier.skills.length">
+            <thead>
+              <tr><th>Skill</th><th>Category</th><th>Level</th><th>Strength</th><th>Confidence</th></tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="s in vm.selectedDossier.skills">
+                <td><strong>{{s.name}}</strong></td>
+                <td><span class="cat-tag">{{s.category}}</span></td>
+                <td>{{s.level || 'Unverified'}}</td>
+                <td>{{s.strength ? s.strength + '%' : '—'}}</td>
+                <td><span class="badge badge-sm">{{s.confidence || 'Detected'}}</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="muted" ng-if="!vm.selectedDossier.skills.length">No skills recorded for this user.</p>
+        </div>
+
+        <!-- 3. Projects Tab -->
+        <div ng-if="vm.dossierTab === 'projects'">
+          <div class="dossier-project-item" ng-repeat="p in vm.selectedDossier.projects">
+            <div class="dpi-head">
+              <strong>{{p.name}}</strong>
+              <span class="badge">{{p.complexity || 'Moderate'}}</span>
+            </div>
+            <p class="small">{{p.description}}</p>
+            <div class="tag-row">
+              <span class="tag" ng-repeat="t in p.technologies">{{t}}</span>
+            </div>
+          </div>
+          <p class="muted" ng-if="!vm.selectedDossier.projects.length">No projects recorded for this user.</p>
+        </div>
+
+        <!-- 4. Goals Tab -->
+        <div ng-if="vm.dossierTab === 'goals'">
+          <div class="dossier-goal-item" ng-repeat="g in vm.selectedDossier.goals">
+            <div class="dgi-head">
+              <strong>{{g.title}}</strong>
+              <span class="badge" ng-class="{'badge-good': g.progress >= 100}">{{g.progress}}%</span>
+            </div>
+            <div class="bar">
+              <div class="bar-fill" ng-style="{width: g.progress + '%'}"></div>
+            </div>
+            <p class="small muted">Target: {{g.targetRole}} <span ng-if="g.deadline">· Deadline: {{g.deadline}}</span></p>
+          </div>
+          <p class="muted" ng-if="!vm.selectedDossier.goals.length">No career goals recorded for this user.</p>
+        </div>
+      </div>
+
+      <footer class="modal-foot">
+        <button type="button" class="btn btn-ghost" ng-click="vm.closeDossier()">Close Dossier</button>
+      </footer>
+    </div>
+  </div>
+
+</section>

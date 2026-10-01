@@ -7,12 +7,18 @@
       <h1 id="skills-title">Skill Intelligence</h1>
       <p class="muted">Every strength score is a CareerSphere analytical estimate built from proficiency + evidence.</p>
     </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-primary" ng-click="appCtrl.openAddSkill()">+ Add Skill</button>
+    </div>
   </div>
 
   <div ng-if="!vm.stats() || !vm.stats().total" class="panel empty-state">
     <h2>No skills detected yet</h2>
-    <p>Import a resume, skill matrix (CSV) or project data in the Data Center.</p>
-    <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+    <p>Add a skill manually or import a resume, skill matrix (CSV) or project data in the Data Center.</p>
+    <div class="btn-row" style="justify-content:center; gap:12px; margin-top:14px;">
+      <button type="button" class="btn btn-primary" ng-click="appCtrl.openAddSkill()">+ Add Skill Now</button>
+      <a class="btn btn-ghost" href="#/data-center">Open Data Center</a>
+    </div>
   </div>
 
   <div ng-if="vm.stats() && vm.stats().total">
@@ -52,7 +58,7 @@
         <div class="panel-head"><h2>Skill matrix</h2><span class="muted small">{{vm.skills().length}} shown</span></div>
         <table class="table table-skills">
           <thead>
-            <tr><th>Skill</th><th>Category</th><th>Level</th><th>Evidence</th><th>Strength</th></tr>
+            <tr><th>Skill</th><th>Category</th><th>Level</th><th>Evidence</th><th>Strength</th><th></th></tr>
           </thead>
           <tbody>
             <tr ng-repeat="s in vm.skills() track by s.id" ng-click="vm.toggleRow(s)" tabindex="0"
@@ -70,6 +76,9 @@
                   <div class="mini-fill" ng-style="{width: s.strength + '%'}" ng-class="strengthClass(s.strength)"></div>
                 </div>
                 <span class="small">{{s.strength}}%</span>
+              </td>
+              <td class="text-right">
+                <button type="button" class="btn btn-mini btn-danger" ng-click="vm.deleteSkill(s.id, $event)" title="Delete skill">✕</button>
               </td>
             </tr>
           </tbody>

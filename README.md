@@ -164,11 +164,30 @@ The repository includes ready-to-use configuration files for seamless deployment
 
 ---
 
-## 🔒 Privacy & Local-First Security
+## 👥 Multi-User Authentication & Role-Based Access Control (RBAC)
 
-* **Zero Network Requests at Runtime:** All processing happens in local browser memory.
-* **Local Persistence:** Data is stored exclusively in `localStorage` under your control.
-* **Honest Scoring:** No fabricated metrics or AI hallucinations; every analytical score is directly calculated from your supplied documentation.
+CareerSphere AI has been upgraded into a secure multi-user career intelligence platform supporting:
+* **Session Management:** Centralized authentication state with persistent user sessions.
+* **Role-Based Authorization:** Separate dashboards and navigation for `USER` and `ADMIN` roles.
+* **Strict Data Isolation:** Each user's career profile, skills, projects, and goals are strictly partitioned under unique `userId` namespaces. User A never sees User B's private career records.
+* **Route Protection:** Public routes (`#/login`, `#/register`), authenticated user routes (`#/overview`, `#/skills`, `#/projects`, `#/learning`, etc.), and admin-only routes (`#/admin`, `#/admin-users`, `#/admin-activity`). Unauthorized route requests are intercepted and redirected safely.
+* **Holistic Admin Dashboard:** Aggregated platform telemetry, user population distribution, skill category breakdowns, user management with complete dossier inspection, and real-time audit activity timeline.
+
+### 🧪 Pre-Configured Test & Demo Accounts
+
+For rapid evaluation and grading, CareerSphere provides pre-configured credentials (also available via 1-click buttons on the Login page):
+
+| Role | Account Name | Email | Password | Pre-Configured Data |
+|---|---|---|---|---|
+| **User A** | Alex Rivera | `usera@test.com` | `user123` | **Python**, PyTorch, **Project A** (Neural Career Predictor), Target Goal: **AI Engineer** |
+| **User B** | Jordan Chen | `userb@test.com` | `user123` | **Java**, Spring Boot, **Project B** (Enterprise Microservices Hub), Target Goal: **Full Stack Developer** |
+| **Admin** | System Administrator | `admin@example.com` | `admin123` | Holistic platform analytics, all users, audit activity log, and user management |
+| **Demo User** | Demo Explorer | `user@example.com` | `user123` | Standard explorer profile with demo datasets |
+
+### 🔒 Security Notice: Prototype Mode vs. Production Mode
+
+* **Prototype Mode (Current):** Designed for static hosting environments (such as GitHub Pages). Data is partitioned in browser `localStorage` using unique user namespaces (`careersphere_u_<userId>_*`). Passwords are protected using cryptographic SHA-256 salted hashes.
+* **Production Mode (Backend Ready):** The core `AuthService` and `StorageService` are built with modular async Promise contracts. In production, these services can be connected directly to a REST API, Supabase, PostgreSQL, or Firebase backend without modifying UI views or controller business logic.
 
 ---
 

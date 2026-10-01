@@ -1,0 +1,90 @@
+<!-- CareerSphere AI — Login View -->
+<div class="auth-page-wrap">
+  <div class="auth-card panel">
+    <div class="auth-header">
+      <div class="auth-brand">
+        <span class="brand-mark">CS</span>
+        <h2>Welcome Back</h2>
+      </div>
+      <p class="muted">Access your personalized Career Intelligence System</p>
+    </div>
+
+    <!-- Error Alert -->
+    <div class="banner banner-error" ng-if="vm.errorMessage" role="alert">
+      <span>{{vm.errorMessage}}</span>
+    </div>
+
+    <form class="auth-form" ng-submit="vm.submit()" novalidate>
+      <div class="form-row">
+        <label class="form-label" for="login-email">Email Address</label>
+        <div class="input-with-icon">
+          <input id="login-email" type="email" class="input" ng-model="vm.credentials.email"
+                 placeholder="name@example.com" required autofocus autocomplete="email">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="label-row">
+          <label class="form-label" for="login-password">Password</label>
+          <button type="button" class="btn-text small" ng-click="vm.toggleShowPassword()">
+            {{vm.showPassword ? 'Hide password' : 'Show password'}}
+          </button>
+        </div>
+        <div class="input-with-icon">
+          <input id="login-password" type="{{vm.showPassword ? 'text' : 'password'}}" class="input"
+                 ng-model="vm.credentials.password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+      </div>
+
+      <div class="form-row form-row-inline">
+        <label class="check">
+          <input type="checkbox" ng-model="vm.credentials.remember">
+          <span>Keep me signed in</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" ng-disabled="vm.loading">
+        <span ng-if="!vm.loading">Sign In to CareerSphere →</span>
+        <span ng-if="vm.loading">Authenticating…</span>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p class="muted small">Don't have an account yet? <a href="#/register">Create your CareerSphere account</a></p>
+    </div>
+
+    <!-- Pro-Level Quick Switcher for Testing / Demonstration -->
+    <div class="demo-accounts-box">
+      <div class="dab-head">
+        <div class="dab-title-wrap">
+          <span class="dab-glow-dot"></span>
+          <span class="dab-heading">1-CLICK TEST PERSONAS</span>
+        </div>
+        <span class="small muted">Instant Verification</span>
+      </div>
+      <div class="dab-grid">
+        <button type="button" class="dab-btn dab-btn-usera" ng-click="vm.quickLogin('usera@test.com', 'user123')" title="Test User A Profile (Python / AI Engineer)">
+          <div class="dab-top-line">
+            <span class="dab-avatar">A</span>
+            <span class="dab-role">User A</span>
+          </div>
+          <div class="dab-tag">Python · AI</div>
+        </button>
+        <button type="button" class="dab-btn dab-btn-userb" ng-click="vm.quickLogin('userb@test.com', 'user123')" title="Test User B Profile (Java / Full Stack)">
+          <div class="dab-top-line">
+            <span class="dab-avatar">B</span>
+            <span class="dab-role">User B</span>
+          </div>
+          <div class="dab-tag">Java · Full Stack</div>
+        </button>
+        <button type="button" class="dab-btn dab-btn-admin" ng-click="vm.quickLogin('admin@example.com', 'admin123')" title="Test Admin Account (Platform Analytics)">
+          <div class="dab-top-line">
+            <span class="dab-avatar dab-avatar-admin">⚡</span>
+            <span class="dab-role">Admin</span>
+          </div>
+          <div class="dab-tag">Holistic Analytics</div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

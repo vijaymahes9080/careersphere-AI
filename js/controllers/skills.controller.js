@@ -123,6 +123,17 @@
         vm.selectedRow = vm.selectedRow === skill.id ? null : skill.id;
         if (vm.selectedRow) vm.selectSkill(skill);
       };
+
+      vm.deleteSkill = function (skillId, $event) {
+        if ($event) $event.stopPropagation();
+        if (confirm('Remove this skill from your career profile?')) {
+          ProfileService.deleteSkill(skillId);
+          if (vm.selectedRow === skillId) {
+            vm.selectedRow = null;
+            vm.selectedNode = null;
+          }
+        }
+      };
     }]);
 
 })(angular);

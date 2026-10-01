@@ -55,7 +55,8 @@
         };
 
         vm.hasData = function () {
-          return ProfileService.state.datasets.length > 0;
+          return (ProfileService.state.datasets && ProfileService.state.datasets.length > 0) ||
+            (ProfileService.state.profile && ProfileService.state.profile.skills && ProfileService.state.profile.skills.length > 0);
         };
 
         render();

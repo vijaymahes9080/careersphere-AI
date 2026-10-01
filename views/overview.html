@@ -5,12 +5,24 @@
   <header class="panel hero-command-center">
     <div class="hero-header-top">
       <div class="hero-brand-meta">
-        <span class="badge badge-accent">CAREER INTELLIGENCE SYSTEM</span>
-        <h1 id="overview-title">{{ vm.profile().identity.name || 'Your Career Profile' }}</h1>
+        <div class="hero-greeting-line">
+          <span class="badge badge-accent">PERSONAL CAREER INTELLIGENCE</span>
+          <span class="user-greeting-badge" ng-if="appCtrl.currentUser()">
+            Signed in as <strong>{{appCtrl.currentUser().name}}</strong> ({{appCtrl.currentUser().role}})
+          </span>
+        </div>
+        <h1 id="overview-title">Welcome, {{ appCtrl.currentUser().name || vm.profile().identity.name || 'Your Career Profile' }}</h1>
         <p class="hero-sub" ng-if="vm.profile().identity.summary">{{ vm.profile().identity.summary }}</p>
         <p class="hero-sub muted" ng-if="!vm.profile().identity.summary && vm.hasData()">
-          Analytical assessment generated from your imported technical profile and portfolio evidence.
+          Analytical assessment generated from your personal technical profile, skills, projects, and verified evidence.
         </p>
+      </div>
+
+      <div class="hero-right-actions">
+        <button type="button" class="btn btn-ghost btn-sm" ng-click="appCtrl.openEditProfile()">✎ Edit Profile</button>
+        <button type="button" class="btn btn-ghost btn-sm" ng-click="appCtrl.openAddSkill()">+ Skill</button>
+        <button type="button" class="btn btn-ghost btn-sm" ng-click="appCtrl.openAddProject()">+ Project</button>
+        <button type="button" class="btn btn-ghost btn-sm" ng-click="appCtrl.openAddGoal()">+ Goal</button>
       </div>
 
       <div class="hero-quick-facts" ng-if="vm.hasData()">

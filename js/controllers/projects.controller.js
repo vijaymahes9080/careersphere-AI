@@ -61,6 +61,16 @@
         var a = ProfileService.state.analyses;
         return a && a.project.projects.length > 0;
       };
+
+      vm.deleteProject = function (name, $event) {
+        if ($event) $event.stopPropagation();
+        if (confirm('Remove project "' + name + '" from your profile?')) {
+          ProfileService.deleteProject(name);
+          if (vm.selectedProject && vm.selectedProject.name === name) {
+            vm.selectedProject = null;
+          }
+        }
+      };
     }]);
 
 })(angular);

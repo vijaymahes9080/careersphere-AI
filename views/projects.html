@@ -7,15 +7,25 @@
       <h1 id="proj-title">Project Intelligence</h1>
       <p class="muted">What each project demonstrates, who it connects to, and what documentation is missing.</p>
     </div>
-    <div class="page-actions" ng-if="vm.stats()">
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Intelligence</p>
+      <h1 id="proj-title">Project Intelligence</h1>
+      <p class="muted">What each project demonstrates, who it connects to, and what documentation is missing.</p>
+    </div>
+    <div class="page-actions">
       <input type="search" class="input" placeholder="Search projects…" ng-model="vm.search" aria-label="Search projects">
+      <button type="button" class="btn btn-primary" ng-click="appCtrl.openAddProject()">+ Add Project</button>
     </div>
   </div>
 
   <div ng-if="!vm.hasData()" class="panel empty-state">
     <h2>No projects imported</h2>
-    <p>Import a projects JSON/CSV dataset (or a resume that lists projects) to see project intelligence.</p>
-    <a class="btn btn-primary" href="#/data-center">Open Data Center</a>
+    <p>Add a project manually or import a projects JSON/CSV dataset to see project intelligence.</p>
+    <div class="btn-row" style="justify-content:center; gap:12px; margin-top:14px;">
+      <button type="button" class="btn btn-primary" ng-click="appCtrl.openAddProject()">+ Add Project Now</button>
+      <a class="btn btn-ghost" href="#/data-center">Open Data Center</a>
+    </div>
   </div>
 
   <div ng-if="vm.hasData()">
@@ -40,6 +50,7 @@
             <span class="badge" title="{{p.complexityNote}}">{{p.complexity}} complexity</span>
             <span class="badge" ng-if="p.relatedRoles.length">{{p.relatedRoles.length}} role link<span ng-if="p.relatedRoles.length > 1">s</span></span>
             <span class="badge badge-err" ng-if="p.missingDocumentation.length">{{p.missingDocumentation.length}} doc gaps</span>
+            <button type="button" class="btn btn-mini btn-danger" ng-click="vm.deleteProject(p.name, $event)" title="Delete project">✕</button>
             <span class="pc-chevron">{{vm.selectedProject === p ? '−' : '+'}}</span>
           </div>
         </header>

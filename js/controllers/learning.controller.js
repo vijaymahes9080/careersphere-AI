@@ -57,6 +57,20 @@
         var c = vm.coverage();
         return !!(c && c.coveragePercent !== null);
       };
+
+      vm.goals = function () {
+        return ProfileService.state.goals || [];
+      };
+
+      vm.deleteGoal = function (goalId) {
+        if (confirm('Delete this career goal?')) {
+          ProfileService.deleteGoal(goalId);
+        }
+      };
+
+      vm.updateGoalProgress = function (goalId, val) {
+        ProfileService.updateGoalProgress(goalId, val);
+      };
     }]);
 
 })(angular);

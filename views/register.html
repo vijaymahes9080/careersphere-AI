@@ -1,0 +1,84 @@
+<!-- CareerSphere AI — Register View -->
+<div class="auth-page-wrap">
+  <div class="auth-card panel">
+    <div class="auth-header">
+      <div class="auth-brand">
+        <span class="brand-mark">CS</span>
+        <h2>Create Your Account</h2>
+      </div>
+      <p class="muted">Join CareerSphere AI to map, analyze, and accelerate your career trajectory</p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div class="banner banner-error" ng-if="vm.errorMessage" role="alert">
+      <span>{{vm.errorMessage}}</span>
+    </div>
+    <div class="banner banner-success" ng-if="vm.successMessage" role="status">
+      <span>{{vm.successMessage}}</span>
+    </div>
+
+    <form class="auth-form" ng-submit="vm.submit()" novalidate>
+      <div class="form-row">
+        <label class="form-label" for="reg-name">Full Name <span class="req">*</span></label>
+        <div class="input-with-icon">
+          <input id="reg-name" type="text" class="input" ng-model="vm.form.name"
+                 placeholder="Alex Morgan" required autofocus autocomplete="name">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label" for="reg-email">Work or Personal Email <span class="req">*</span></label>
+        <div class="input-with-icon">
+          <input id="reg-email" type="email" class="input" ng-model="vm.form.email"
+                 placeholder="alex@domain.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="split-2">
+        <div class="form-row">
+          <label class="form-label" for="reg-role">Target Role <span class="muted small">(Optional)</span></label>
+          <input id="reg-role" type="text" class="input" ng-model="vm.form.targetRole"
+                 placeholder="e.g. AI Engineer, Full Stack Developer">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="reg-education">Degree / Field <span class="muted small">(Optional)</span></label>
+          <input id="reg-education" type="text" class="input" ng-model="vm.form.education"
+                 placeholder="e.g. B.S. Computer Science">
+        </div>
+      </div>
+
+      <div class="split-2">
+        <div class="form-row">
+          <label class="form-label" for="reg-pass">Password <span class="req">*</span></label>
+          <div class="input-with-icon">
+            <input id="reg-pass" type="{{vm.showPassword ? 'text' : 'password'}}" class="input"
+                   ng-model="vm.form.password" placeholder="Min. 6 characters" required autocomplete="new-password">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="label-row">
+            <label class="form-label" for="reg-cpass">Confirm Password <span class="req">*</span></label>
+            <button type="button" class="btn-text small" ng-click="vm.toggleShowPassword()">
+              {{vm.showPassword ? 'Hide' : 'Show'}}
+            </button>
+          </div>
+          <div class="input-with-icon">
+            <input id="reg-cpass" type="{{vm.showPassword ? 'text' : 'password'}}" class="input"
+                   ng-model="vm.form.confirmPassword" placeholder="Repeat password" required autocomplete="new-password">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" ng-disabled="vm.loading" style="margin-top:8px;">
+        <span ng-if="!vm.loading">Create Account &amp; Enter Dashboard →</span>
+        <span ng-if="vm.loading">Setting up your profile…</span>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p class="muted small">Already have an account? <a href="#/login">Sign in to your CareerSphere</a></p>
+    </div>
+  </div>
+</div>

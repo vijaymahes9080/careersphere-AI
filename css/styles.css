@@ -3130,3 +3130,744 @@ body.theme-light .stage-tab {
   .pipe-arr { transform: rotate(90deg); margin: 4px 0; }
   .gap-pipeline-strip { flex-direction: column; text-align: center; }
 }
+
+/* ============================================================
+   CAREERSPHERE MULTI-USER & AUTHENTICATION STYLES
+   ============================================================ */
+
+/* ── Auth Page Layout ────────────────────────────────────── */
+.auth-page-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 170px);
+  padding: 48px 16px;
+  position: relative;
+  background:
+    radial-gradient(800px 500px at 50% 20%, rgba(79, 140, 255, 0.12), transparent 70%),
+    radial-gradient(600px 400px at 80% 80%, rgba(124, 92, 255, 0.1), transparent 60%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 490px;
+  padding: 40px 36px;
+  background: rgba(18, 25, 41, 0.78);
+  border: 1px solid rgba(130, 165, 245, 0.18);
+  border-radius: 20px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body.theme-light .auth-card {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(30, 60, 130, 0.14);
+  box-shadow:
+    0 24px 60px rgba(35, 55, 110, 0.16),
+    0 0 0 1px rgba(255, 255, 255, 0.8) inset;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.auth-brand h2 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  background: linear-gradient(135deg, #ffffff 40%, var(--text-2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-light .auth-brand h2 {
+  background: linear-gradient(135deg, #16203a 30%, #3b4866 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.auth-header p {
+  font-size: 14px;
+  color: var(--text-2);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.auth-form .form-row {
+  margin-bottom: 18px;
+}
+
+.auth-form .form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+
+.auth-form .input {
+  width: 100%;
+  padding: 11px 14px;
+  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  background: rgba(12, 17, 28, 0.65);
+  color: var(--text);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.theme-light .auth-form .input {
+  background: #f8fafc;
+  border-color: rgba(30, 60, 130, 0.16);
+}
+
+.auth-form .input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.2);
+  outline: none;
+}
+
+.auth-form .form-row-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0 20px 0;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.btn-text:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-lg {
+  padding: 13px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px rgba(79, 140, 255, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-lg:hover:not(:disabled) {
+  box-shadow: 0 6px 24px rgba(79, 140, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-lg:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--panel-border);
+}
+
+/* ── Pro-Level 1-Click Test Persona Box ──────────────────── */
+.demo-accounts-box {
+  margin-top: 24px;
+  padding: 16px 18px;
+  background: rgba(14, 20, 34, 0.7);
+  border: 1px solid rgba(120, 150, 220, 0.16);
+  border-radius: 14px;
+}
+
+body.theme-light .demo-accounts-box {
+  background: rgba(240, 244, 252, 0.85);
+  border-color: rgba(30, 60, 130, 0.12);
+}
+
+.dab-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.dab-title-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dab-glow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--good);
+  box-shadow: 0 0 8px var(--good);
+}
+
+.dab-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+.dab-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.dab-btn {
+  background: rgba(24, 32, 51, 0.85);
+  border: 1px solid rgba(120, 150, 220, 0.15);
+  border-radius: 10px;
+  padding: 10px 8px;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+body.theme-light .dab-btn {
+  background: #ffffff;
+  border-color: rgba(30, 60, 130, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.dab-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.dab-btn-usera:hover {
+  border-color: var(--cyan);
+  background: rgba(53, 208, 224, 0.12);
+}
+
+.dab-btn-userb:hover {
+  border-color: var(--good);
+  background: rgba(47, 212, 138, 0.12);
+}
+
+.dab-btn-admin:hover {
+  border-color: var(--accent-2);
+  background: rgba(124, 92, 255, 0.16);
+}
+
+.dab-top-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dab-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(79, 140, 255, 0.2);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dab-btn-usera .dab-avatar {
+  background: rgba(53, 208, 224, 0.25);
+  color: var(--cyan);
+}
+
+.dab-btn-userb .dab-avatar {
+  background: rgba(47, 212, 138, 0.25);
+  color: var(--good);
+}
+
+.dab-avatar-admin {
+  background: rgba(124, 92, 255, 0.25) !important;
+  color: var(--accent-2) !important;
+}
+
+.dab-role {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.dab-tag {
+  font-size: 10px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 2px;
+}
+
+.dab-role {
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.dab-btn-admin .dab-role {
+  color: var(--accent-2);
+}
+
+.dab-sub {
+  font-size: 10px;
+  color: var(--text-3);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Header User Profile Badge ───────────────────────────── */
+.user-header-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 4px 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--panel-border);
+  border-radius: 24px;
+}
+
+.avatar-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--grad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+.user-chip-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-chip-name {
+  font-size: 12px;
+  font-weight: 600;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hdr-auth-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Hero Greeting ───────────────────────────────────────── */
+.hero-greeting-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.user-greeting-badge {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.hero-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+/* ── Admin Subnav ────────────────────────────────────────── */
+.admin-subnav {
+  display: flex;
+  gap: 12px;
+  padding: 8px 16px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.admin-subnav a {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  color: var(--text-2);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-subnav a:hover,
+.admin-subnav a.active {
+  color: #fff;
+  background: rgba(79, 140, 255, 0.16);
+  border: 1px solid rgba(79, 140, 255, 0.3);
+}
+
+/* ── Cat Bar & Pill Lists for Admin ──────────────────────── */
+.cat-bar-item {
+  margin-bottom: 12px;
+}
+
+.cat-bar-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.pill-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+}
+
+.pill-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.pill-count {
+  font-size: 12px;
+  color: var(--accent);
+}
+
+/* ── System Status Grid ──────────────────────────────────── */
+.security-status-panel {
+  margin: 20px 0;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.status-box {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+}
+
+.sb-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.sb-val {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--good);
+  margin-bottom: 6px;
+}
+
+@media (max-width: 900px) {
+  .status-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 500px) {
+  .status-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Activity Timeline ───────────────────────────────────── */
+.activity-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+}
+
+.act-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 6px;
+}
+
+.act-dot-system {
+  background: var(--warn);
+}
+
+.act-content {
+  flex: 1;
+}
+
+.act-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.act-desc {
+  margin: 2px 0 6px 0;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* ── Full Audit Timeline View ────────────────────────────── */
+.activity-timeline-full {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity-row {
+  display: grid;
+  grid-template-columns: 160px 80px 180px 180px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.ar-action-tag {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .activity-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+/* ── Admin Users Table ───────────────────────────────────── */
+.table-admin-users th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.table-admin-users th.sortable:hover {
+  color: var(--accent);
+}
+
+.row-disabled {
+  opacity: 0.6;
+  background: rgba(255, 93, 115, 0.04);
+}
+
+/* ── Dossier Modal ───────────────────────────────────────── */
+.dossier-modal {
+  max-width: 780px;
+  width: 100%;
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  color: var(--text-2);
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tab-btn.active {
+  color: #fff;
+  background: var(--accent);
+}
+
+.dossier-project-item,
+.dossier-goal-item {
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.dpi-head, .dgi-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+/* ── Career Goals Panel ──────────────────────────────────── */
+.career-goals-panel {
+  margin-bottom: 24px;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.goal-card {
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.goal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.slider-sm {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.text-danger {
+  color: var(--danger) !important;
+}
+
+/* ── Modals Helpers ──────────────────────────────────────── */
+.modal-sm { max-width: 440px; }
+.modal-md { max-width: 600px; }
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.req {
+  color: var(--danger);
+}
+
+.well {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.user-profile-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ups-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ups-k {
+  color: var(--text-2);
+  font-size: 13px;
+}
+
+.ups-v {
+  font-size: 14px;
+}
+

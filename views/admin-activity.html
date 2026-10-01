@@ -1,0 +1,70 @@
+<!-- CareerSphere AI — Admin Audit Activity Log -->
+<section class="page admin-activity-page" aria-labelledby="activity-title">
+
+  <div class="page-head">
+    <div>
+      <p class="eyebrow">Platform Administration</p>
+      <h1 id="activity-title">Platform Audit Activity</h1>
+      <p class="muted">Tamper-evident chronological timeline of user authentication, profile modifications, and administrative operations.</p>
+    </div>
+    <div class="page-actions">
+      <button type="button" class="btn btn-ghost" ng-click="vm.exportLogs()">⬇ Export CSV</button>
+      <button type="button" class="btn btn-danger" ng-click="vm.clearLogs()">Clear History</button>
+      <a href="#/admin" class="btn btn-ghost">← Admin Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Admin Subnavigation Bar -->
+  <nav class="panel admin-subnav" aria-label="Admin Navigation">
+    <a href="#/admin">Overview &amp; Analytics</a>
+    <a href="#/admin-users">User Management</a>
+    <a href="#/admin-activity" class="active">Audit Activity Log</a>
+    <a href="#/settings">Platform Settings</a>
+  </nav>
+
+  <!-- Filter Toolbar -->
+  <div class="panel filter-bar" role="toolbar" aria-label="Activity filter controls">
+    <div class="filter-left">
+      <div class="chip-row">
+        <button type="button" class="chip" ng-class="{active: vm.filterType === 'all'}" ng-click="vm.filterType = 'all'">All Events</button>
+        <button type="button" class="chip" ng-class="{active: vm.filterType === 'user'}" ng-click="vm.filterType = 'user'">User Actions</button>
+        <button type="button" class="chip" ng-class="{active: vm.filterType === 'system'}" ng-click="vm.filterType = 'system'">System Events</button>
+      </div>
+    </div>
+    <div class="filter-right">
+      <input type="search" class="input" placeholder="Search events, users, actions…" ng-model="vm.search" aria-label="Search activity">
+    </div>
+  </div>
+
+  <!-- Timeline Feed -->
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Chronological Audit Events</h2>
+      <span class="muted small">{{vm.activities().length}} events logged</span>
+    </div>
+
+    <div class="activity-timeline-full">
+      <div class="activity-row" ng-repeat="a in vm.activities() track by a.id">
+        <div class="ar-time muted small">
+          {{a.timestamp | date:'yyyy-MM-dd HH:mm:ss'}}
+        </div>
+        <div class="ar-badge">
+          <span class="badge badge-sm" ng-class="{'badge-accent': a.userRole === 'admin', 'badge-demo': a.userRole === 'system'}">
+            {{a.userRole | uppercase}}
+          </span>
+        </div>
+        <div class="ar-user">
+          <strong>{{a.userName}}</strong>
+        </div>
+        <div class="ar-action">
+          <span class="ar-action-tag">{{a.action}}</span>
+        </div>
+        <div class="ar-details">
+          {{a.details}}
+        </div>
+      </div>
+      <p class="muted" ng-if="!vm.activities().length">No activity recorded matching this filter.</p>
+    </div>
+  </div>
+
+</section>

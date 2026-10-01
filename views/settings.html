@@ -1,77 +1,164 @@
-<!-- CareerSphere AI — Settings -->
+<!-- CareerSphere AI — Settings & Account Management -->
 <section class="page" aria-labelledby="set-title">
 
   <div class="page-head">
     <div>
-      <p class="eyebrow">Configuration</p>
+      <p class="eyebrow">Account &amp; System Configuration</p>
       <h1 id="set-title">Settings</h1>
+      <p class="muted">Manage your credentials, career focus, session privacy, and application appearance.</p>
     </div>
   </div>
 
   <div class="settings-grid">
-    <!-- Appearance -->
+    <!-- ═══ ACCOUNT & PROFILE INFORMATION ═══ -->
     <div class="panel">
-      <div class="panel-head"><h2>Appearance</h2></div>
-      <div class="form-row">
-        <span class="form-label">Theme</span>
-        <div class="chip-row">
-          <button type="button" class="chip" ng-class="{active: vm.state.settings.theme !== 'light'}" ng-click="vm.setTheme('dark')">Dark</button>
-          <button type="button" class="chip" ng-class="{active: vm.state.settings.theme === 'light'}" ng-click="vm.setTheme('light')">Light</button>
+      <div class="panel-head">
+        <h2>Account Profile</h2>
+        <span class="badge" ng-class="{'badge-accent': vm.currentUser().role === 'admin'}">
+          {{vm.currentUser().role | uppercase}}
+        </span>
+      </div>
+
+      <div class="user-profile-summary" ng-if="vm.currentUser()">
+        <div class="ups-row">
+          <span class="ups-k">Full Name</span>
+          <span class="ups-v"><strong>{{vm.currentUser().name}}</strong></span>
         </div>
+        <div class="ups-row">
+          <span class="ups-k">Email Address</span>
+          <span class="ups-v"><code>{{vm.currentUser().email}}</code></span>
+        </div>
+        <div class="ups-row">
+          <span class="ups-k">User ID</span>
+          <span class="ups-v small muted"><code>{{vm.currentUser().userId}}</code></span>
+        </div>
+        <div class="ups-row">
+          <span class="ups-k">Member Since</span>
+          <span class="ups-v small muted">{{vm.currentUser().createdAt | date:'mediumDate'}}</span>
+        </div>
+        <div class="ups-row" ng-if="vm.currentUser().lastLogin">
+          <span class="ups-k">Last Signed In</span>
+          <span class="ups-v small muted">{{vm.currentUser().lastLogin | date:'medium'}}</span>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:16px;">
+        <button type="button" class="btn btn-primary" ng-click="appCtrl.openEditProfile()">Edit Career Profile</button>
+        <button type="button" class="btn btn-ghost" ng-click="vm.logout()">Sign Out</button>
       </div>
     </div>
 
-    <!-- Target role -->
+    <!-- ═══ CHANGE PASSWORD ═══ -->
     <div class="panel">
-      <div class="panel-head"><h2>Target role</h2></div>
+      <div class="panel-head"><h2>Change Password</h2></div>
+
+      <div class="banner banner-success" ng-if="vm.passwordSuccess">{{vm.passwordSuccess}}</div>
+      <div class="banner banner-error" ng-if="vm.passwordError">{{vm.passwordError}}</div>
+
+      <form ng-submit="vm.changePassword()">
+        <div class="form-row">
+          <label class="form-label" for="cp-current">Current Password</label>
+          <input id="cp-current" type="password" class="input" ng-model="vm.passwordForm.currentPassword" required>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="cp-new">New Password</label>
+          <input id="cp-new" type="password" class="input" ng-model="vm.passwordForm.newPassword" placeholder="Min. 6 characters" required>
+        </div>
+        <div class="form-row">
+          <label class="form-label" for="cp-confirm">Confirm New Password</label>
+          <input id="cp-confirm" type="password" class="input" ng-model="vm.passwordForm.confirmPassword" required>
+        </div>
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary" ng-disabled="vm.changingPassword">
+            <span ng-if="!vm.changingPassword">Update Password</span>
+            <span ng-if="vm.changingPassword">Securing…</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ═══ TARGET ROLE ═══ -->
+    <div class="panel">
+      <div class="panel-head"><h2>Target Role Focus</h2></div>
       <div class="form-row">
-        <label class="form-label" for="set-role">Selected role for coverage &amp; gaps</label>
+        <label class="form-label" for="set-role">Active focus role for coverage &amp; gaps</label>
         <select id="set-role" class="input" ng-model="vm.pendingRole">
           <option value="">Select target role…</option>
           <option ng-repeat="r in vm.roles() track by r.id" value="{{r.id}}">{{r.title}}</option>
         </select>
       </div>
       <div class="btn-row">
-        <button type="button" class="btn btn-primary" ng-click="vm.saveRole()">Save</button>
+        <button type="button" class="btn btn-primary" ng-click="vm.saveRole()">Save Focus</button>
       </div>
-      <p class="muted small">Requirements come only from your imported datasets. CareerSphere does not invent job requirements.</p>
-      <p class="muted small" ng-if="!vm.roles().length">No target roles yet — import a target-role dataset (JSON/CSV).</p>
+      <p class="muted small">Coverage and recommendations calculate against this target role's requirements.</p>
     </div>
 
-    <!-- Demo data -->
+    <!-- ═══ APPEARANCE ═══ -->
     <div class="panel">
-      <div class="panel-head"><h2>Demo data</h2></div>
-      <p class="muted small">Demo datasets are clearly labeled "DEMO DATA" and are never mixed silently with your own data.</p>
+      <div class="panel-head"><h2>Appearance</h2></div>
+      <div class="form-row">
+        <span class="form-label">Color Theme</span>
+        <div class="chip-row">
+          <button type="button" class="chip" ng-class="{active: vm.state.settings.theme !== 'light'}" ng-click="vm.setTheme('dark')">Dark Mode</button>
+          <button type="button" class="chip" ng-class="{active: vm.state.settings.theme === 'light'}" ng-click="vm.setTheme('light')">Light Mode</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ DEMO DATA ═══ -->
+    <div class="panel">
+      <div class="panel-head"><h2>Demo Datasets</h2></div>
+      <p class="muted small">Demo datasets are explicitly tagged DEMO DATA and remain strictly isolated from your own profile entries.</p>
       <div class="btn-row">
-        <button type="button" class="btn btn-ghost" ng-click="vm.loadDemo()">Load demo bundle</button>
-        <button type="button" class="btn btn-ghost" ng-if="vm.hasDemo()" ng-click="vm.purgeDemo()">Remove demo data</button>
+        <button type="button" class="btn btn-ghost" ng-click="vm.loadDemo()">Load Demo Bundle</button>
+        <button type="button" class="btn btn-ghost" ng-if="vm.hasDemo()" ng-click="vm.purgeDemo()">Remove Demo Data</button>
       </div>
     </div>
 
-    <!-- Privacy -->
+    <!-- ═══ PRIVACY & STORAGE ═══ -->
     <div class="panel">
-      <div class="panel-head"><h2>Privacy &amp; storage</h2></div>
+      <div class="panel-head"><h2>Privacy &amp; Data Isolation</h2></div>
       <ul class="pc-list">
-        <li>✓ All processing happens locally in your browser.</li>
-        <li>✓ No career documents are sent to external services.</li>
-        <li>✓ No API keys, no accounts, no tracking.</li>
-        <li>✓ Personal data is not written to logs.</li>
+        <li>✓ All career documents stay in your browser.</li>
+        <li>✓ Data partitioned strictly by your unique User ID.</li>
+        <li>✓ Passwords hashed via SHA-256 with cryptographic salt.</li>
+        <li>✓ No unauthorized users can query your personal dossier.</li>
       </ul>
-      <p class="muted small">Local storage used: <strong>{{vm.storageUsed()}}</strong> (profile + datasets in this browser)</p>
+      <p class="muted small">Storage used by your account: <strong>{{vm.storageUsed()}}</strong></p>
       <div class="btn-row">
-        <button type="button" class="btn btn-danger" ng-click="vm.clearAll()">Delete all my data</button>
+        <button type="button" class="btn btn-danger" ng-click="vm.clearAll()">Delete All My Career Data</button>
       </div>
     </div>
 
-    <!-- Pipeline -->
+    <!-- ═══ ARCHITECTURE & PRODUCTION BACKEND NOTICE ═══ -->
     <div class="panel panel-wide">
-      <div class="panel-head"><h2>Architecture pipeline (last run)</h2></div>
+      <div class="panel-head">
+        <h2>Architecture: Prototype Mode vs. Production Mode</h2>
+        <span class="badge badge-accent">ARCHITECTURE DISCLOSURE</span>
+      </div>
+      <div class="status-grid">
+        <div class="status-box">
+          <span class="sb-label">Current Architecture</span>
+          <span class="sb-val">Prototype Mode</span>
+          <p class="muted small">Runs on static hosting (e.g. GitHub Pages) using browser-local storage with isolated user namespaces and cryptographic token simulation. Zero external dependencies.</p>
+        </div>
+        <div class="status-box">
+          <span class="sb-label">Production Backend Ready</span>
+          <span class="sb-val">Modular Services</span>
+          <p class="muted small">The application's <code>AuthService</code> and <code>StorageService</code> use Promise-based async contracts, allowing drop-in replacement with a REST API, Supabase, PostgreSQL, or Firebase without UI alterations.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PIPELINE ═══ -->
+    <div class="panel panel-wide">
+      <div class="panel-head"><h2>Architecture Pipeline (Last Run)</h2></div>
       <div class="pipeline-strip">
         <div class="pipeline-steps">
           <span class="pipe-step" ng-repeat="s in vm.pipelineLog()">{{s.step}} <strong>{{s.ms}}ms</strong></span>
         </div>
       </div>
-      <p class="muted small">ingestion → parsing → normalization → entity extraction → relationship building → evidence → analysis → visualization. New datasets flow through the same pipeline without dashboard changes.</p>
+      <p class="muted small">ingestion → parsing → normalization → entity extraction → relationship building → evidence → analysis → visualization.</p>
     </div>
   </div>
 </section>
